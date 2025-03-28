@@ -21,7 +21,6 @@ from rich.panel import Panel
 from rich.text import Text
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
-
 def compute_entropy(attn_matrix):
     """Compute entropy of attention distributions per layer."""
     entropy = -torch.sum(attn_matrix * torch.log(attn_matrix + 1e-9), dim=-1)
