@@ -1,5 +1,9 @@
 from setuptools import setup
 
+# Read the content from README file
+with open("README.md", "r", encoding="utf-8") as fh:
+    long_description = fh.read()
+
 setup(
     name="openmav",  # Users install with `pip install openmav`
     version="0.0.2",
@@ -17,6 +21,8 @@ setup(
     author="attentionmech",
     author_email="attentionmech@gmail.com",
     description="Model Activation Visualizer",
+    long_description=long_description,  # Add long description
+    long_description_content_type="text/markdown",  # Use "text/x-rst" if using reStructuredText
     url="https://github.com/attentionmech/mav",
     classifiers=[
         "Programming Language :: Python :: 3",
