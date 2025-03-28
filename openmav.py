@@ -21,6 +21,7 @@ from rich.panel import Panel
 from rich.text import Text
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
+
 def compute_entropy(attn_matrix):
     """Compute entropy of attention distributions per layer."""
     entropy = -torch.sum(attn_matrix * torch.log(attn_matrix + 1e-9), dim=-1)
@@ -28,6 +29,7 @@ def compute_entropy(attn_matrix):
 
 
 class DataConverter:
+
     @staticmethod
     def process_mlp_activations(hidden_states, aggregation="l2"):
         """
@@ -43,11 +45,11 @@ class DataConverter:
         activations = torch.stack([layer[:, -1, :] for layer in hidden_states])
 
         if aggregation == "mean":
-            return activations.mean(dim=-1).numpy()
+            return activations.mean(dim=-1).cpu().numpy()
         elif aggregation == "l2":
-            return torch.norm(activations, p=2, dim=-1).numpy()
+            return torch.norm(activations, p=2, dim=-1).cpu().numpy()
         elif aggregation == "max_abs":
-            return activations.abs().max(dim=-1).values.numpy()
+            return activations.abs().max(dim=-1).values.cpu().numpy()
         else:
             raise ValueError(
                 "Invalid aggregation method. Choose from: mean, l2, max_abs."
@@ -64,7 +66,9 @@ class DataConverter:
         Returns:
             numpy.ndarray: Entropy values for each layer
         """
-        return np.array([compute_entropy(attn[:, :, -1, :]) for attn in attentions])
+        return np.array(
+            [compute_entropy(attn[:, :, -1, :].cpu()) for attn in attentions]
+        )
 
     @staticmethod
     def normalize_activations(activations, max_bar_length=20):
@@ -158,7 +162,8 @@ class ModelActivationVisualizer:
                     if user_input.lower() == "q":
                         break
                 else:
-                    time.sleep(self.refresh_rate)
+                    if self.refresh_rate > 0:
+                        time.sleep(self.refresh_rate)
 
         finally:
             self.live.stop()
@@ -298,9 +303,10 @@ class ModelBackend:
         raise NotImplementedError("Subclasses must implement decode()")
 
 
-class TransformersBackend(ModelBackend):
-    def __init__(self, model_name):
-        super().__init__(model_name)
+class TransformersBackend:
+    def __init__(self, model_name, device="cpu"):
+        self.model_name = model_name
+        self.device = device
         self.initialize()
 
     def initialize(self):
@@ -310,7 +316,8 @@ class TransformersBackend(ModelBackend):
                 return_dict_in_generate=True,
                 output_hidden_states=True,
                 output_attentions=True,
-            )
+            ).to(self.device)
+
             self.tokenizer = AutoTokenizer.from_pretrained(self.model_name)
 
             if self.tokenizer.pad_token is None:
@@ -320,16 +327,18 @@ class TransformersBackend(ModelBackend):
             raise
 
     def generate(self, input_ids):
+        input_tensor = torch.tensor([input_ids]).to(self.device)
         with torch.no_grad():
-            outputs = self.model(torch.tensor([input_ids]))
+            outputs = self.model(input_tensor)
+
         return {
-            "logits": outputs.logits,
+            "logits": outputs.logits.cpu(),
             "hidden_states": outputs.hidden_states,
             "attentions": outputs.attentions,
         }
 
     def tokenize(self, text):
-        return self.tokenizer(text, return_tensors="pt")["input_ids"]
+        return self.tokenizer(text, return_tensors="pt")["input_ids"].to(self.device)
 
     def decode(self, token_ids, **kwargs):
         return self.tokenizer.decode(token_ids, **kwargs)
@@ -375,13 +384,21 @@ def main():
         default=False,
     )
 
+    parser.add_argument(
+        "--device",
+        type=str,
+        choices=["cpu", "cuda", "mps"],
+        default="cpu",
+        help="Device to run the model on (cpu, cuda, mps)",
+    )
+
     args = parser.parse_args()
 
     if args.prompt is None or len(args.prompt) == 0:
         print("Prompt cannot be empty.")
         return
 
-    backend = TransformersBackend(args.model)
+    backend = TransformersBackend(args.model, args.device)
     visualizer = ModelActivationVisualizer(
         backend=backend,
         max_new_tokens=args.tokens,
