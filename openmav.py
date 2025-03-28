@@ -209,7 +209,6 @@ class ModelActivationVisualizer:
         )
 
         layout.split_column(
-            Layout(None, size=1),
             Layout(predictions_panel, size=5),
             Layout(name="bottom_panel"),  # Placeholder for the bottom row
         )
