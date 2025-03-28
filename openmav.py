@@ -21,6 +21,7 @@ from rich.panel import Panel
 from rich.text import Text
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
+
 def compute_entropy(attn_matrix):
     """Compute entropy of attention distributions per layer."""
     entropy = -torch.sum(attn_matrix * torch.log(attn_matrix + 1e-9), dim=-1)
@@ -32,11 +33,11 @@ class DataConverter:
     def process_mlp_activations(hidden_states, aggregation="l2"):
         """
         Process MLP activations based on specified aggregation method.
-        
+
         Args:
             hidden_states (torch.Tensor): Hidden states from the model
             aggregation (str): Aggregation method to use
-        
+
         Returns:
             numpy.ndarray: Processed MLP activations
         """
@@ -57,10 +58,10 @@ class DataConverter:
     def process_entropy(attentions):
         """
         Compute entropy values for attention matrices.
-        
+
         Args:
             attentions (list): Attention matrices from the model
-        
+
         Returns:
             numpy.ndarray: Entropy values for each layer
         """
@@ -70,11 +71,11 @@ class DataConverter:
     def normalize_activations(activations, max_bar_length=20):
         """
         Normalize activations for visualization.
-        
+
         Args:
             activations (numpy.ndarray): Raw activation values
             max_bar_length (int): Maximum length of visualization bar
-        
+
         Returns:
             numpy.ndarray: Normalized activations
         """
@@ -85,11 +86,11 @@ class DataConverter:
     def normalize_entropy(entropy_values, max_bar_length=20):
         """
         Normalize entropy values for visualization.
-        
+
         Args:
             entropy_values (numpy.ndarray): Raw entropy values
             max_bar_length (int): Maximum length of visualization bar
-        
+
         Returns:
             numpy.ndarray: Normalized entropy values
         """
@@ -106,6 +107,7 @@ class ModelActivationVisualizer:
         max_bar_length=20,
         aggregation="l2",
         refresh_rate=0.2,
+        interactive=False,
     ):
         self.backend = backend
         self.console = Console()
@@ -114,6 +116,7 @@ class ModelActivationVisualizer:
         self.refresh_rate = refresh_rate
         self.max_new_tokens = max_new_tokens
         self.max_bar_length = max_bar_length
+        self.interactive = interactive
         self.data_converter = DataConverter()
 
     def generate_with_visualization(self, prompt):
@@ -151,7 +154,12 @@ class ModelActivationVisualizer:
                     entropy_values,
                 )
 
-                time.sleep(self.refresh_rate)
+                if self.interactive:
+                    user_input = self.console.input("")
+                    if user_input.lower() == "q":
+                        break
+                else:
+                    time.sleep(self.refresh_rate)
 
         finally:
             self.live.stop()
@@ -361,6 +369,13 @@ def main():
         help="Refresh rate for visualization",
     )
 
+    parser.add_argument(
+        "--interactive",
+        action="store_true",
+        help="Enable interactive mode (press Enter to continue)",
+        default=False,
+    )
+
     args = parser.parse_args()
 
     if args.prompt is None or len(args.prompt) == 0:
@@ -373,6 +388,7 @@ def main():
         max_new_tokens=args.tokens,
         aggregation=args.aggregation,
         refresh_rate=args.refresh_rate,
+        interactive=args.interactive,
     )
     visualizer.generate_with_visualization(args.prompt)
 
