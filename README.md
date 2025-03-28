@@ -10,7 +10,7 @@
 #### If `uv` is installed:  
 
 ```sh
-uv run --with git+https://github.com/attentionmech/mav@pilot mav --model gpt2 --prompt "hello mello"
+uv run --with git+https://github.com/attentionmech/mav mav --model gpt2 --prompt "hello mello"
 ```  
 
 #### Without `uv`:
@@ -18,7 +18,7 @@ uv run --with git+https://github.com/attentionmech/mav@pilot mav --model gpt2 --
 1. Set up and activate a virtual environment  
 2. Install the package:  
    ```sh
-   pip install git+https://github.com/attentionmech/mav@pilot
+   pip install git+https://github.com/attentionmech/mav
    ```  
 3. Run the visualizer:  
    ```sh

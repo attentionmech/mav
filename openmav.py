@@ -14,6 +14,7 @@ from rich.console import Console
 from rich.text import Text
 from rich.layout import Layout
 from rich.panel import Panel
+from rich.live import Live
 import argparse
 
 
@@ -37,6 +38,7 @@ class ModelActivationVisualizer:
         Model Activation Visualizer (MAV)
         """
         self.console = Console()
+        self.live = Live(auto_refresh=False)
         self.aggregation = aggregation
         self.model_name = model_name
         self.refresh_rate = refresh_rate
@@ -66,43 +68,42 @@ class ModelActivationVisualizer:
         inputs = self.tokenizer(prompt, return_tensors="pt")
         generated_ids = inputs["input_ids"].tolist()[0]
 
-        for _ in range(self.max_new_tokens):
-            with torch.no_grad():
-                outputs = self.model(torch.tensor([generated_ids]))
-                logits = outputs.logits
+        self.console.show_cursor(False)
+        self.live.start()
 
-                try:
+        try:
+            for _ in range(self.max_new_tokens):
+                with torch.no_grad():
+                    outputs = self.model(torch.tensor([generated_ids]))
+                    logits = outputs.logits
                     hidden_states = outputs.hidden_states
                     attentions = outputs.attentions
-                except AttributeError:
-                    print("Model does not support visualization.")
-                    break
 
-            next_token_probs = torch.softmax(logits[:, -1, :], dim=-1).squeeze()
-            top_probs, top_ids = torch.topk(next_token_probs, 10)
-            next_token_id = top_ids[0].item()
-            generated_ids.append(next_token_id)
+                next_token_probs = torch.softmax(logits[:, -1, :], dim=-1).squeeze()
+                top_probs, top_ids = torch.topk(next_token_probs, 8)
+                next_token_id = top_ids[0].item()
+                generated_ids.append(next_token_id)
 
-            try:
                 mlp_activations = self._process_mlp_activations(hidden_states)
                 entropy_values = np.array(
                     [compute_entropy(attn[:, :, -1, :]) for attn in attentions]
                 )
-            except Exception as e:
-                print(f"Error processing activations: {e}")
-                break
 
-            self._render_visualization(
-                generated_ids,
-                next_token_id,
-                mlp_activations,
-                top_ids,
-                top_probs,
-                logits,
-                entropy_values,
-            )
+                self._render_visualization(
+                    generated_ids,
+                    next_token_id,
+                    mlp_activations,
+                    top_ids,
+                    top_probs,
+                    logits,
+                    entropy_values,
+                )
 
-            time.sleep(self.refresh_rate)
+                time.sleep(self.refresh_rate)
+
+        finally:
+            self.live.stop()
+            self.console.show_cursor(True)
 
     def _process_mlp_activations(self, hidden_states):
         """
@@ -180,7 +181,7 @@ class ModelActivationVisualizer:
             entropy_val = float(entropy_val)
             entropy_norm = int(abs(float(entropy_norm)))
             entropy_bar = "█" * entropy_norm
-            entropy_str += f"[bold white]Layer {i+1:2d}[/] | [bold yellow]:[/] [{entropy_bar.ljust(self.max_bar_length)}] {entropy_val:.4f}\n"
+            entropy_str += f"[bold white]Layer {i + 1:2d}[/] | [bold yellow]:[/] [{entropy_bar.ljust(self.max_bar_length)}] {entropy_val:.4f}\n"
 
         entropy_panel = Panel(
             entropy_str, title="Attention Entropy", border_style="magenta"
@@ -219,8 +220,7 @@ class ModelActivationVisualizer:
             Layout(entropy_panel, ratio=2),
         )
 
-        self.console.clear()
-        self.console.print(layout)
+        self.live.update(layout, refresh=True)
 
 
 def main():
