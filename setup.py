@@ -17,7 +17,7 @@ setup(
     author="attentionmech",
     author_email="attentionmech@gmail.com",
     description="Model Activation Visualizer",
-    url="https://github.com/attentionmech/openmav",
+    url="https://github.com/attentionmech/mav",
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
