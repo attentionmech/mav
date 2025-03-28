@@ -72,6 +72,11 @@ You can replace `gpt2` with other Hugging Face models for example:
 - `meta-llama/Llama-3.2-1B`  
 - `HuggingFaceTB/SmolLM-135M`  
 
+## Tutorials
+
+- [interactive mode](https://x.com/attentionmech/status/1905732784314081511)
+
+
 ## What Are We Plotting?  
 
 At every point in prediction, multiple next tokens are possible, each with a different confidence level. The tokens and the numbers near them represent these probabilities.  
