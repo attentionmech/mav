@@ -142,6 +142,7 @@ class ModelActivationVisualizer:
         refresh_rate=0.2,
         interactive=False,
         scale="linear",
+        limit_chars=20,
     ):
         self.backend = backend
         self.console = Console()
@@ -152,6 +153,7 @@ class ModelActivationVisualizer:
         self.max_bar_length = max_bar_length
         self.interactive = interactive
         self.scale = scale
+        self.limit_chars = limit_chars
 
         self.data_converter = DataConverter()
 
@@ -257,6 +259,8 @@ class ModelActivationVisualizer:
         )
 
         # Render generated text panel
+        generated_text = generated_text[-self.limit_chars :]
+
         highlighted_text = Text(generated_text, style="bold bright_red")
         highlighted_text.append(predicted_char, style="bold on green")
         top_panel = Panel(
@@ -393,7 +397,7 @@ def main():
         help="Initial prompt for text generation",
     )
     parser.add_argument(
-        "--tokens", type=int, default=100, help="Number of tokens to generate"
+        "--tokens", type=int, default=200, help="Number of tokens to generate"
     )
     parser.add_argument(
         "--aggregation",
@@ -432,6 +436,13 @@ def main():
         help="Scaling method for visualization (linear, log, minmax).",
     )
 
+    parser.add_argument(
+        "--limit-chars",
+        type=int,
+        default=500,
+        help="Limit the number of tokens for visualization.",
+    )
+
     args = parser.parse_args()
 
     if args.prompt is None or len(args.prompt) == 0:
@@ -446,6 +457,7 @@ def main():
         refresh_rate=args.refresh_rate,
         interactive=args.interactive,
         scale=args.scale,
+        limit_chars=args.limit_chars,
     )
 
     visualizer.generate_with_visualization(args.prompt)
