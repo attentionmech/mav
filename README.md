@@ -3,11 +3,13 @@
 ![image](https://github.com/user-attachments/assets/7147a0d7-d8ad-4b40-bb53-270c4b7afceb)
 
 
-# MAV
-
-## Installation  
+## Getting started  
 
 #### If `uv` is installed:  
+
+```sh
+uv run --with openmav mav
+```  
 
 ```sh
 uv run --with git+https://github.com/attentionmech/mav mav --model gpt2 --prompt "hello mello"
