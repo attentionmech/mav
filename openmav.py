@@ -10,30 +10,16 @@
 # @author: attentionmech
 
 import argparse
-import torch
 import time
 
-import torch
 import numpy as np
-from transformers import AutoModelForCausalLM, AutoTokenizer
-
-from rich.console import Console
-from rich.text import Text
-from rich.layout import Layout
-from rich.panel import Panel
-from rich.live import Live
-
-import argparse
 import torch
-import time
-import numpy as np
-from transformers import AutoModelForCausalLM, AutoTokenizer
 from rich.console import Console
-from rich.text import Text
 from rich.layout import Layout
-from rich.panel import Panel
 from rich.live import Live
-
+from rich.panel import Panel
+from rich.text import Text
+from transformers import AutoModelForCausalLM, AutoTokenizer
 
 def compute_entropy(attn_matrix):
     """Compute entropy of attention distributions per layer."""
