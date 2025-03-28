@@ -15,6 +15,7 @@ from rich.console import Console
 from rich.text import Text
 from rich.layout import Layout
 from rich.panel import Panel
+from rich.live import Live
 import argparse
 
 
@@ -36,20 +37,22 @@ class ModelActivationVisualizer:
         self.aggregation = aggregation
         self.model_name = model_name
         self.refresh_rate = refresh_rate
-
+        # Add device detection
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self.console.print(f"Using device: {self.device}")
         try:
             self.model = AutoModelForCausalLM.from_pretrained(
                 model_name,
                 return_dict_in_generate=True,
                 output_hidden_states=True,
                 output_attentions=True,
-            )
+            ).to(self.device)
             self.tokenizer = AutoTokenizer.from_pretrained(model_name)
 
             if self.tokenizer.pad_token is None:
                 self.tokenizer.pad_token = self.tokenizer.eos_token
         except Exception as e:
-            print(f"Error loading model: {e}")
+            self.console.print(f"Error loading model: {e}")
             raise
 
         self.max_new_tokens = max_new_tokens
@@ -59,46 +62,49 @@ class ModelActivationVisualizer:
         """
         Generate text and visualize model activations and attention entropy dynamically.
         """
-        inputs = self.tokenizer(prompt, return_tensors="pt")
+        inputs = self.tokenizer(prompt, return_tensors="pt").to(self.device)
         generated_ids = inputs["input_ids"].tolist()[0]
 
-        for _ in range(self.max_new_tokens):
-            with torch.no_grad():
-                outputs = self.model(torch.tensor([generated_ids]))
-                logits = outputs.logits
+        with Live(console=self.console) as live:
+
+            for _ in range(self.max_new_tokens):
+                with torch.no_grad():
+                    outputs = self.model(torch.tensor([generated_ids]).to(self.device))
+                    logits = outputs.logits
+
+                    try:
+                        hidden_states = outputs.hidden_states
+                        attentions = outputs.attentions
+                    except AttributeError:
+                        print("Model does not support visualization.")
+                        break
+
+                next_token_probs = torch.softmax(logits[:, -1, :], dim=-1).squeeze()
+                top_probs, top_ids = torch.topk(next_token_probs, 10)
+                next_token_id = top_ids[0].item()
+                generated_ids.append(next_token_id)
 
                 try:
-                    hidden_states = outputs.hidden_states
-                    attentions = outputs.attentions
-                except AttributeError:
-                    print("Model does not support visualization.")
+                    mlp_activations = self._process_mlp_activations(hidden_states)
+                    entropy_values = np.array(
+                        [compute_entropy(attn[:, :, -1, :]) for attn in attentions]
+                    )
+                except Exception as e:
+                    self.console.print(f"Error processing activations: {e}")
                     break
 
-            next_token_probs = torch.softmax(logits[:, -1, :], dim=-1).squeeze()
-            top_probs, top_ids = torch.topk(next_token_probs, 10)
-            next_token_id = top_ids[0].item()
-            generated_ids.append(next_token_id)
-
-            try:
-                mlp_activations = self._process_mlp_activations(hidden_states)
-                entropy_values = np.array(
-                    [compute_entropy(attn[:, :, -1, :]) for attn in attentions]
+                self._render_visualization(
+                    generated_ids,
+                    next_token_id,
+                    mlp_activations,
+                    top_ids,
+                    top_probs,
+                    logits,
+                    entropy_values,
+                    live
                 )
-            except Exception as e:
-                print(f"Error processing activations: {e}")
-                break
 
-            self._render_visualization(
-                generated_ids,
-                next_token_id,
-                mlp_activations,
-                top_ids,
-                top_probs,
-                logits,
-                entropy_values,
-            )
-
-            time.sleep(self.refresh_rate)
+                time.sleep(self.refresh_rate)
 
     def _process_mlp_activations(self, hidden_states):
         """
@@ -107,11 +113,11 @@ class ModelActivationVisualizer:
         activations = torch.stack([layer[:, -1, :] for layer in hidden_states])
 
         if self.aggregation == "mean":
-            return activations.mean(dim=-1).numpy()
+            return activations.mean(dim=-1).cpu().numpy()
         elif self.aggregation == "l2":
-            return torch.norm(activations, p=2, dim=-1).numpy()
+            return torch.norm(activations, p=2, dim=-1).cpu().numpy()
         elif self.aggregation == "max_abs":
-            return activations.abs().max(dim=-1).values.numpy()
+            return activations.abs().max(dim=-1).values.cpu().numpy()
         else:
             raise ValueError(
                 "Invalid aggregation method. Choose from: mean, l2, max_abs."
@@ -126,6 +132,7 @@ class ModelActivationVisualizer:
         top_probs,
         logits,
         entropy_values,
+        live
     ):
         """
         Render the activation and entropy visualization using Rich library.
@@ -213,13 +220,18 @@ class ModelActivationVisualizer:
             Layout(entropy_panel, ratio=2),
         )
 
-        self.console.clear()
-        self.console.print(layout)
+        # self.console.print(layout)
+        live.update(layout, refresh=True)
 
 
 def main():
     parser = argparse.ArgumentParser(
         description="Model Activation and Entropy Visualizer"
+    )
+    parser.add_argument(
+        "--no-cuda",
+        action="store_true",
+        help="Disable CUDA even if available"
     )
     parser.add_argument(
         "--model",
@@ -252,6 +264,9 @@ def main():
 
 
     args = parser.parse_args()
+
+    if args.no_cuda:
+        torch.cuda.is_available = lambda: False
 
     visualizer = ModelActivationVisualizer(
         model_name=args.model, max_new_tokens=args.tokens, aggregation=args.aggregation
