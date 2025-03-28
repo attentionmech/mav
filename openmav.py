@@ -1,6 +1,5 @@
 # /// script
 # dependencies = [
-#   "requests<3",
 #   "rich",
 #   "torch",
 #   "transformers",
@@ -26,7 +25,12 @@ def compute_entropy(attn_matrix):
 
 class ModelActivationVisualizer:
     def __init__(
-        self, model_name, max_new_tokens=100, max_bar_length=20, aggregation="mean", refresh_rate=0.2
+        self,
+        model_name,
+        max_new_tokens=100,
+        max_bar_length=20,
+        aggregation="mean",
+        refresh_rate=0.2,
     ):
         """
         Initialize the visualizer with a specified Hugging Face model.
@@ -134,6 +138,8 @@ class ModelActivationVisualizer:
         mlp_normalized = (mlp_activations / max_abs_act) * self.max_bar_length
 
         max_entropy = np.max(entropy_values)
+        max_entropy = max(max_entropy, 1e-9)
+
         entropy_normalized = (entropy_values / max_entropy) * self.max_bar_length
 
         generated_text = self.tokenizer.decode(
@@ -204,7 +210,7 @@ class ModelActivationVisualizer:
         layout.split_column(
             Layout(None, size=1),
             Layout(predictions_panel, size=5),
-            Layout(name="bottom_panel")  # Placeholder for the bottom row
+            Layout(name="bottom_panel"),  # Placeholder for the bottom row
         )
 
         layout["bottom_panel"].split_row(
@@ -250,8 +256,12 @@ def main():
         help="Refresh rate for visualization",
     )
 
-
     args = parser.parse_args()
+
+    # avoiding empty prompt for now just for sanity
+    if args.prompt is None or len(args.prompt) == 0:
+        print("Prompt cannot be empty.")
+        return
 
     visualizer = ModelActivationVisualizer(
         model_name=args.model, max_new_tokens=args.tokens, aggregation=args.aggregation
