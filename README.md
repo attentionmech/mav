@@ -20,10 +20,25 @@ uv run --with git+https://github.com/attentionmech/mav mav --model gpt2 --prompt
    ```sh
    pip install git+https://github.com/attentionmech/mav
    ```  
-3. Run the visualizer:  
+3. Run:  
    ```sh
    mav --model gpt2 --prompt "hello mello"
    ```
+
+#### Locally from scratch
+
+1. git clone https://github.com/attentionmech/mav  
+2. cd mav
+3. Set up and activate a virtual environment  
+4. Install the package:  
+   ```sh
+   pip install .
+   ```  
+5. Run:  
+   ```sh
+   mav --model gpt2 --prompt "hello mello"
+   ```
+
 
 You can replace `gpt2` with other Hugging Face models for example:  
 - `meta-llama/Llama-3.2-1B`  
