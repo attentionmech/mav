@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name="openmav",  # Users install with `pip install openmav`
-    version="0.0.1",
+    version="0.0.2",
     py_modules=["openmav"],  # Rename your script to openmav.py
     install_requires=[
         "rich",
