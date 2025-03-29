@@ -191,7 +191,7 @@ class ModelActivationVisualizer:
                 attentions = outputs["attentions"]
 
                 next_token_probs = torch.softmax(logits[:, -1, :], dim=-1).squeeze()
-                top_probs, top_ids = torch.topk(next_token_probs, 8)
+                top_probs, top_ids = torch.topk(next_token_probs, 20)
                 next_token_id = torch.multinomial(
                     next_token_probs, num_samples=1
                 ).item()
@@ -211,6 +211,7 @@ class ModelActivationVisualizer:
                     top_probs,
                     logits,
                     entropy_values,
+                    next_token_probs,
                 )
 
                 if self.interactive:
@@ -234,6 +235,7 @@ class ModelActivationVisualizer:
         top_probs,
         logits,
         entropy_values,
+        next_token_probs,
     ):
         mlp_normalized = self.data_converter.normalize_activations(
             mlp_activations, scale_type=self.scale, max_bar_length=self.max_bar_length
@@ -279,7 +281,12 @@ class ModelActivationVisualizer:
             border_style="blue",
         )
 
-        # Render generated text panel
+        prob_bin_panel = Panel(
+            self._create_prob_bin_panel(next_token_probs),
+            title="Output Distribution",
+            border_style="yellow",
+        )
+
         generated_text = generated_text[-self.limit_chars :]
 
         highlighted_text = Text(generated_text, style="bold bright_red")
@@ -297,9 +304,10 @@ class ModelActivationVisualizer:
         )
 
         layout["bottom_panel"].split_row(
-            Layout(top_panel, ratio=1),
-            Layout(activations_panel, ratio=2),
-            Layout(entropy_panel, ratio=2),
+            Layout(top_panel, ratio=2),
+            Layout(activations_panel, ratio=3),
+            Layout(entropy_panel, ratio=3),
+            Layout(prob_bin_panel, ratio=2),
         )
 
         self.live.update(layout, refresh=True)
@@ -318,7 +326,7 @@ class ModelActivationVisualizer:
 
             activations_str += (
                 f"[bold white]Layer {i:2d}[/] | "
-                f"[bold yellow]:[/] [{mlp_color}]{mlp_bar.ljust(self.max_bar_length)}[/] [bold yellow]{raw_mlp_scalar:+.4f}[/]\n"
+                f"[bold yellow]:[/] [{mlp_color}]{mlp_bar.ljust(self.max_bar_length)}[/] [bold yellow]{raw_mlp_scalar:+.1f}[/]\n"
             )
         return activations_str
 
@@ -330,17 +338,61 @@ class ModelActivationVisualizer:
             entropy_val = float(entropy_val)
             entropy_norm = int(abs(float(entropy_norm)))
             entropy_bar = "█" * entropy_norm
-            entropy_str += f"[bold white]Layer {i + 1:2d}[/] | [bold yellow]:[/] [{entropy_bar.ljust(self.max_bar_length)}] {entropy_val:.4f}\n"
+            entropy_str += f"[bold white]Layer {i + 1:2d}[/] | [bold yellow]:[/] [{entropy_bar.ljust(self.max_bar_length)}] {entropy_val:.1f}\n"
         return entropy_str
 
     def _create_top_predictions_panel_content(self, top_ids, top_probs, logits):
-        return "    ".join(
-            f"[bold magenta]{self.backend.decode([token_id], clean_up_tokenization_spaces=True)}[/] "
-            f"([bold yellow]{prob:.1%}[/bold yellow], [bold cyan]{logit:.2f}[/bold cyan])"
+        # Create list of formatted entries
+        entries = [
+            f"[bold magenta]{self.backend.decode([token_id], clean_up_tokenization_spaces=True).strip()[:10] or ' ':<10}[/] "
+            f"([bold yellow]{prob:>5.1%}[/bold yellow], [bold cyan]{logit:>4.1f}[/bold cyan])"
             for token_id, prob, logit in zip(
                 top_ids.tolist(), top_probs.tolist(), logits[0, -1, top_ids].tolist()
             )
+        ]
+
+        # Chunk into groups of 5 and join with newlines
+        chunked = [entries[i : i + 5] for i in range(0, len(entries), 5)]
+        return "\n".join("    ".join(chunk) for chunk in chunked)
+
+    def _create_prob_bin_panel(self, next_token_probs, num_bins=20):
+        """
+        Create a histogram-like panel for token probabilities after sorting.
+
+        Args:
+            next_token_probs (torch.Tensor): Probabilities of the next token.
+            num_bins (int): Number of bins to divide the sorted probabilities.
+
+        Returns:
+            str: Formatted string representing probability bins.
+        """
+        next_token_probs = next_token_probs.cpu().numpy()
+
+        sorted_probs = np.sort(next_token_probs)
+
+        sorted_probs = sorted_probs[
+            -100:
+        ]  # TODO: find better way to organise params for this project
+
+        bin_edges = np.linspace(0, len(sorted_probs), num_bins + 1, dtype=int)
+        bin_sums = [
+            np.sum(sorted_probs[bin_edges[i] : bin_edges[i + 1]])
+            for i in range(num_bins)
+        ]
+
+        max_sum = max(bin_sums) if max(bin_sums) > 0 else 1
+        bar_chars = ["█" * int((s / max_sum) * self.max_bar_length) for s in bin_sums]
+
+        bin_labels = [
+            f"{sorted_probs[bin_edges[i + 1] - 1]:.4f}" for i in range(num_bins)
+        ]
+
+        bin_output = "\n".join(
+            f"[bold yellow]{label}[/]: [bold cyan]{bar}[/]"
+            for label, bar, s in zip(bin_labels, bar_chars, bin_sums)
         )
+
+        return bin_output
 
 
 class ModelBackend:
@@ -498,7 +550,7 @@ def main():
     parser.add_argument(
         "--limit-chars",
         type=int,
-        default=500,
+        default=250,
         help="Limit the number of tokens for visualization.",
     )
 
