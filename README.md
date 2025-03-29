@@ -24,7 +24,7 @@
 +===========================================================================+
 ```
 
-<img width="1008" alt="Screenshot" src="https://github.com/user-attachments/assets/b565c7c9-bddb-4051-84d7-d279e7bc562b" />
+<img width="1098" alt="Screenshot" src="https://github.com/user-attachments/assets/0fc919c9-42a5-49d6-8471-2463668799c9" />
 
 
 ## Getting started  
