@@ -6,7 +6,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="openmav",  # Users install with `pip install openmav`
-    version="0.0.3",
+    version="0.0.4",
     py_modules=["openmav"],  # Rename your script to openmav.py
     install_requires=[
         "rich",
