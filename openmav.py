@@ -519,7 +519,7 @@ def main():
     parser.add_argument(
         "--refresh-rate",
         type=float,
-        default=0.0,
+        default=0.1,
         help="Refresh rate for visualization",
     )
 
