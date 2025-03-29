@@ -101,5 +101,3 @@ These are just intuitive explanations—it's best to study these concepts from m
 ## Contributing
 
 IMP NOTE: The design is not good for scaling it right now to multiple backends, and stuff which i am planning.. so your pull requests will have to wait for sometime
-
-please raise PRs to dev branch. 
