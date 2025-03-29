@@ -86,7 +86,6 @@ Note: quantized models aren't supported right now
 
 - [interactive mode](https://x.com/attentionmech/status/1905732784314081511)
 - [limit chars](https://x.com/attentionmech/status/1905760510445850709)
-- [scale factor](https://x.com/attentionmech/status/1905756260370165786)
 - [sample with temperature](https://x.com/attentionmech/status/1905886861245259857)
 
 Note: explore it using the command line help as well, since many sampling params are exposed.
