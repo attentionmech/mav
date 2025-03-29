@@ -11,6 +11,7 @@
 
 import argparse
 import time
+import warnings
 
 import numpy as np
 import torch
@@ -21,21 +22,16 @@ from rich.panel import Panel
 from rich.text import Text
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
-import warnings
 
 warnings.filterwarnings("ignore")
 
-
-class Utils:
+class DataConverter:
 
     @staticmethod
     def compute_entropy(attn_matrix):
         """Compute entropy of attention distributions per layer."""
         entropy = -torch.sum(attn_matrix * torch.log(attn_matrix + 1e-9), dim=-1)
         return entropy.mean(dim=-1).cpu().numpy()
-
-
-class DataConverter:
 
     @staticmethod
     def process_mlp_activations(hidden_states, aggregation="l2"):
@@ -72,7 +68,7 @@ class DataConverter:
             numpy.ndarray: Entropy values for each layer
         """
         return np.array(
-            [Utils.compute_entropy(attn[:, :, -1, :].cpu()) for attn in attentions]
+            [DataConverter.compute_entropy(attn[:, :, -1, :].cpu()) for attn in attentions]
         )
 
     @staticmethod
