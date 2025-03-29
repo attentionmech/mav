@@ -89,6 +89,3 @@ You can replace `gpt2` with other Hugging Face models for example:
 
 Note: explore it using the command line help as well, since many sampling params are exposed.
 
-## Contributing
-
-IMP NOTE: The design is not good for scaling it right now to multiple backends, and stuff which i am planning.. so your pull requests will have to wait for sometime
