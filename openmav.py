@@ -488,7 +488,7 @@ class TransformersBackend(ModelBackend):
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Model Activation and Entropy Visualizer"
+        description="Model Activation Visualizer"
     )
     parser.add_argument(
         "--model",
