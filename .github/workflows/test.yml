@@ -12,7 +12,7 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest-gpu  # Use the appropriate GPU runner label
 
     steps:
       - name: Checkout repository
@@ -27,6 +27,12 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install .
+          pip install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cu118  # Adjust CUDA version as needed
+
+      - name: Verify CUDA installation
+        run: |
+          nvidia-smi
+          python -c "import torch; print('CUDA Available:', torch.cuda.is_available())"
 
       - name: Run MAV script
         run: mav
