@@ -433,6 +433,7 @@ class TransformersBackend(ModelBackend):
                 return_dict_in_generate=True,
                 output_hidden_states=True,
                 output_attentions=True,
+                attn_implementation="eager",
             ).to(self.device)
 
             self.tokenizer = AutoTokenizer.from_pretrained(self.model_name)
@@ -558,7 +559,7 @@ def main():
         "--temp",
         type=float,
         default=0.0,
-        help="Sampling temperature (higher values = more randomness, default: 1.0)",
+        help="Sampling temperature (higher values = more randomness, default: 0.0)",
     )
 
     parser.add_argument(
