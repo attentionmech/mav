@@ -50,16 +50,14 @@ class DataConverter:
             numpy.ndarray: Processed MLP activations
         """
         activations = torch.stack([layer[:, -1, :] for layer in hidden_states])
-
-        if aggregation == "mean":
-            return activations.mean(dim=-1).cpu().numpy()
-        elif aggregation == "l2":
+          
+        if aggregation == "l2":
             return torch.norm(activations, p=2, dim=-1).cpu().numpy()
         elif aggregation == "max_abs":
             return activations.abs().max(dim=-1).values.cpu().numpy()
         else:
             raise ValueError(
-                "Invalid aggregation method. Choose from: mean, l2, max_abs."
+                "Invalid aggregation method. Choose from: l2, max_abs."
             )
 
     @staticmethod
@@ -514,9 +512,9 @@ def main():
     parser.add_argument(
         "--aggregation",
         type=str,
-        choices=["mean", "l2", "max_abs"],
+        choices=["l2", "max_abs"],
         default="l2",
-        help="Aggregation method (mean, l2, max_abs)",
+        help="Aggregation method (l2, max_abs)",
     )
     parser.add_argument(
         "--refresh-rate",
