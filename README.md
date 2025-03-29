@@ -45,6 +45,12 @@ uv run --with git+https://github.com/attentionmech/mav mav --model gpt2 --prompt
 
 1. Set up and activate a virtual environment  
 2. Install the package:  
+   
+   ```sh
+   pip install openmav
+   ```  
+   or
+
    ```sh
    pip install git+https://github.com/attentionmech/mav
    ```  
@@ -70,7 +76,11 @@ uv run --with git+https://github.com/attentionmech/mav mav --model gpt2 --prompt
 
 You can replace `gpt2` with other Hugging Face models for example:  
 - `meta-llama/Llama-3.2-1B`  
-- `HuggingFaceTB/SmolLM-135M`  
+- `HuggingFaceTB/SmolLM-135M` 
+- `gpt2-medium`
+- `gpt2-large`
+
+Note: quantized models aren't supported right now
 
 ## Demos
 
