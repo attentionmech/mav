@@ -8,47 +8,32 @@ from rich.live import Live
 from rich.panel import Panel
 from rich.text import Text
 
-from openmav.processors.data_processor import MAVDataProcessor
+from openmav.processors.data_processor import MAVDataProcessor, MAVGenerator
 
 
 class ConsoleMAV:
-    def __init__(self, backend, max_new_tokens=100, refresh_rate=0.2, interactive=False, limit_chars=20):
+    """
+    Handles UI and visualization.
+    """
+
+    def __init__(self, backend, refresh_rate=0.2, interactive=False, limit_chars=20):
         self.backend = backend
         self.console = Console()
         self.live = Live(auto_refresh=False)
         self.refresh_rate = refresh_rate
-        self.max_new_tokens = max_new_tokens
         self.interactive = interactive
         self.limit_chars = limit_chars
-        self.data_processor = MAVDataProcessor(backend)
+        self.generator = MAVGenerator(backend)  # Use MAVGenerator for token generation
 
-    def generate_with_visualization(self, prompt, temperature=1.0, top_k=50, top_p=1.0, min_p=0.0, repetition_penalty=1.0):
-        inputs = self.backend.tokenize(prompt)
-        generated_ids = inputs.tolist()[0]
-
+    def ui_loop(self, prompt, **gen_kwargs):
+        """
+        Runs the UI loop, updating the display with new data from MAVGenerator.
+        """
         self.console.show_cursor(False)
         self.live.start()
 
         try:
-            for _ in range(self.max_new_tokens):
-                outputs = self.backend.generate(
-                    generated_ids,
-                    temperature=temperature,
-                    top_k=top_k,
-                    top_p=top_p,
-                    min_p=min_p,
-                    repetition_penalty=repetition_penalty,
-                )
-                logits = outputs["logits"]
-                hidden_states = outputs["hidden_states"]
-                attentions = outputs["attentions"]
-
-                next_token_probs = torch.softmax(logits[:, -1, :], dim=-1).squeeze()
-                top_probs, top_ids = torch.topk(next_token_probs, 20)
-                next_token_id = torch.multinomial(next_token_probs, num_samples=1).item()
-                generated_ids.append(next_token_id)
-
-                data = self.data_processor.process_data(generated_ids, next_token_id, hidden_states, attentions, logits, next_token_probs, top_ids, top_probs, self.backend)
+            for data in self.generator.generate_tokens(prompt, **gen_kwargs):
                 self._render_visualization(data)
 
                 if self.interactive:
@@ -64,6 +49,9 @@ class ConsoleMAV:
             self.console.show_cursor(True)
 
     def _render_visualization(self, data):
+        """
+        Handles UI updates based on provided data.
+        """
         layout = Layout()
 
         activations_panel = Panel(
