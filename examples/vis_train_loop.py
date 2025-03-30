@@ -24,9 +24,6 @@ model = GPT2LMHeadModel(config)
 tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
 tokenizer.pad_token = tokenizer.eos_token
 
-model.to(torch.device("cpu"))
-
-
 dataset = load_dataset("roneneldan/TinyStories", split="train[:1%]")
 
 def tokenize_function(examples):
