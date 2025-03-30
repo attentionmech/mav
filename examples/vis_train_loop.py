@@ -6,6 +6,7 @@
 #   "openmav@git+https://github.com/attentionmech/mav@train_test",
 # ]
 # ///
+import os
 import torch
 from transformers import GPT2Config, GPT2LMHeadModel, GPT2Tokenizer, Trainer, TrainingArguments, DataCollatorForLanguageModeling, TrainerCallback
 from datasets import load_dataset
@@ -20,6 +21,8 @@ config = GPT2Config(
 )
 
 model = GPT2LMHeadModel(config)
+device = torch.device("cpu")
+model.to(device)
 tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
 tokenizer.pad_token = tokenizer.eos_token
 
@@ -58,7 +61,7 @@ class InferenceCallback(TrainerCallback):
     def perform_inference(self, step):
         self.model.eval()
         with torch.no_grad():
-            MAV("gpt2", "Once upon a time", model_obj=self.model, tokenizer_obj=self.tokenizer, max_new_tokens=20, refresh_rate=0.02)            
+            MAV("gpt2", "Once upon a time", model_obj=self.model, tokenizer_obj=self.tokenizer, max_new_tokens=20, refresh_rate=0.02, device="cpu")            
 
         self.model.train()
 
