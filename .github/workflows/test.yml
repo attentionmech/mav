@@ -30,6 +30,25 @@ jobs:
 
       - name: Test help flag
         run: mav --help
+      
+      - name: Test all flags
+        run: | 
+          mav \
+              --model gpt2 \
+              --prompt "Testing MAV tool" \
+              --max-new-tokens 5 \
+              --aggregation l2 \
+              --refresh-rate 0.1 \
+              --device cpu \
+              --scale linear \
+              --limit-chars 200 \
+              --temp 0.7 \
+              --top-k 40 \
+              --top-p 0.9 \
+              --min-p 0.1 \
+              --repetition-penalty 1.2 \
+              --backend transformers \
+              --seed 123
 
-      - name: Run MAV script
-        run: mav
+      - name: Run MAV script plain
+        run: mav --max-new-tokens 10
