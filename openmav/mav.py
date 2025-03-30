@@ -4,6 +4,7 @@ import argparse
 import warnings
 
 from openmav.backends.model_backend_transformers import TransformersBackend
+from openmav.processors.data_processor import MAVGenerator
 from openmav.view.console_view import ConsoleMAV
 
 warnings.filterwarnings("ignore")
@@ -52,8 +53,17 @@ def MAV(
     else:
         raise ValueError(f"Unsupported backend: {backend}")
 
+    mav_generator = MAVGenerator(
+            backend,
+            max_new_tokens=max_new_tokens,
+            aggregation=aggregation,
+            scale=scale,
+            max_bar_length=max_bar_length,
+    )
+
+
     manager = ConsoleMAV(
-        backend=backend,
+        data_provider=mav_generator,
         refresh_rate=refresh_rate,
         interactive=interactive,
         limit_chars=limit_chars,

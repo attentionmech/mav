@@ -1,6 +1,5 @@
 import time
 import numpy as np
-import torch
 
 from rich.console import Console
 from rich.layout import Layout
@@ -8,7 +7,6 @@ from rich.live import Live
 from rich.panel import Panel
 from rich.text import Text
 
-from openmav.processors.data_processor import MAVGenerator
 
 
 class ConsoleMAV:
@@ -18,7 +16,7 @@ class ConsoleMAV:
 
     def __init__(
         self,
-        backend,
+        data_provider,
         refresh_rate=0.2,
         interactive=False,
         limit_chars=20,
@@ -34,8 +32,8 @@ class ConsoleMAV:
         num_grid_rows=1,
         selected_panels=None,
     ):
-        self.backend = backend
         self.console = Console()
+        self.data_provider = data_provider
         self.live = Live(auto_refresh=False)
         self.refresh_rate = refresh_rate
         self.interactive = interactive
@@ -52,13 +50,7 @@ class ConsoleMAV:
         self.num_grid_rows = num_grid_rows
         self.selected_panels = selected_panels
 
-        self.generator = MAVGenerator(
-            backend,
-            max_new_tokens=self.max_new_tokens,
-            aggregation=self.aggregation,
-            scale=self.scale,
-            max_bar_length=self.max_bar_length,
-        )
+        
 
     def ui_loop(self, prompt):
         """
@@ -68,7 +60,7 @@ class ConsoleMAV:
         self.live.start()
 
         try:
-            for data in self.generator.generate_tokens(
+            for data in self.data_provider.generate_tokens(
                 prompt,
                 temperature=self.temperature,
                 top_k=self.top_k,
@@ -101,7 +93,7 @@ class ConsoleMAV:
         panel_definitions = {
             "top_predictions": Panel(
                 self._create_top_predictions_panel_content(
-                    data["top_ids"], data["top_probs"], data["logits"]
+                    data["decoded_tokens"], data["top_ids"], data["top_probs"], data["logits"]
                 ),
                 title="Top Predictions",
                 border_style="blue",
@@ -152,7 +144,7 @@ class ConsoleMAV:
             len(panels) + num_rows - 1
         ) // num_rows  # Best effort even distribution
 
-        title_bar = Layout(Panel("MAV", border_style="white"), size=3)
+        title_bar = Layout(Panel("| OpenMAV |", border_style="white"), size=3)
         rows = [Layout() for _ in range(num_rows)]
         layout.split_column(title_bar, *rows)
 
@@ -192,17 +184,20 @@ class ConsoleMAV:
             entropy_str += f"[bold white]Layer {i + 1:2d}[/] | [bold yellow]:[/] [{entropy_bar.ljust(self.max_bar_length)}] {entropy_val:.1f}\n"
         return entropy_str
 
-    def _create_top_predictions_panel_content(self, top_ids, top_probs, logits):
-        # Create list of formatted entries
+
+
+    def _create_top_predictions_panel_content(self, decoded_tokens, top_ids, top_probs, logits):
+        
         entries = [
-            f"[bold magenta]{self.backend.decode([token_id], clean_up_tokenization_spaces=True).strip()[:10] or ' ':<10}[/] "
+            f"[bold magenta]{token:<10}[/] "
             f"([bold yellow]{prob:>5.1%}[/bold yellow], [bold cyan]{logit:>4.1f}[/bold cyan])\n"
-            for token_id, prob, logit in zip(
-                top_ids.tolist(), top_probs.tolist(), logits[0, -1, top_ids].tolist()
+            for token, prob, logit in zip(
+                decoded_tokens, top_probs.tolist(), logits[0, -1, top_ids].tolist()
             )
         ]
 
-        return "\n".join(entry for entry in entries)
+        return "\n".join(entries)
+
 
     def _create_prob_bin_panel(self, next_token_probs, num_bins=20):
         """
