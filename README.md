@@ -82,7 +82,8 @@ You can replace `gpt2` with other Hugging Face models for example:
 
 ## UI
 
-<img width="1098" alt="Screenshot" src="https://github.com/user-attachments/assets/0fc919c9-42a5-49d6-8471-2463668799c9" />
+![image](https://github.com/user-attachments/assets/ed0dee9d-fe31-43a4-8a4a-303631680bc3)
+
 
 ## Examples
 
