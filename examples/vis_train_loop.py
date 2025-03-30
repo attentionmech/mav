@@ -12,10 +12,6 @@ from transformers import GPT2Config, GPT2LMHeadModel, GPT2Tokenizer, Trainer, Tr
 from datasets import load_dataset
 from openmav import MAV
 
-import warnings
-warnings.filterwarnings("ignore")
-
-
 DEVICE="mps" if torch.backends.mps.is_available() else "cuda" if torch.cuda.is_available() else "cpu"
 
 config = GPT2Config(

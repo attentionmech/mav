@@ -484,6 +484,8 @@ class TransformersBackend(ModelBackend):
                 output_scores=True,
                 output_hidden_states=True,
                 output_attentions=True,
+                pad_token_id=self.tokenizer.eos_token_id #warning TODO: find correct way to handle this
+
             )
 
         return {
