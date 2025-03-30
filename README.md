@@ -1,3 +1,11 @@
+![PyPI](https://img.shields.io/pypi/v/openmav.svg)
+![Python Versions](https://img.shields.io/pypi/pyversions/openmav)
+![PyPI - Downloads](https://img.shields.io/pypi/dm/openmav)
+![GitHub Repo stars](https://img.shields.io/github/stars/attentionmech/mav)
+![Build Status](https://github.com/attentionmech/mav/actions/workflows/test.yml/badge.svg)
+![License](https://img.shields.io/pypi/l/openmav)
+
+
 ```
 +===========================================================================+
 |          _____                    _____                    _____          |
