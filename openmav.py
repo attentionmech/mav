@@ -24,6 +24,7 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 
 warnings.filterwarnings("ignore")
 
+
 class DataConverter:
 
     @staticmethod
@@ -45,15 +46,13 @@ class DataConverter:
             numpy.ndarray: Processed MLP activations
         """
         activations = torch.stack([layer[:, -1, :] for layer in hidden_states])
-          
+
         if aggregation == "l2":
             return torch.norm(activations, p=2, dim=-1).cpu().numpy()
         elif aggregation == "max_abs":
             return activations.abs().max(dim=-1).values.cpu().numpy()
         else:
-            raise ValueError(
-                "Invalid aggregation method. Choose from: l2, max_abs."
-            )
+            raise ValueError("Invalid aggregation method. Choose from: l2, max_abs.")
 
     @staticmethod
     def process_entropy(attentions):
@@ -67,7 +66,10 @@ class DataConverter:
             numpy.ndarray: Entropy values for each layer
         """
         return np.array(
-            [DataConverter.compute_entropy(attn[:, :, -1, :].cpu()) for attn in attentions]
+            [
+                DataConverter.compute_entropy(attn[:, :, -1, :].cpu())
+                for attn in attentions
+            ]
         )
 
     @staticmethod
@@ -417,14 +419,14 @@ class TransformersBackend(ModelBackend):
     def __init__(self, model_name, device="cpu", seed=42):
         self.model_name = model_name
         self.device = device
-        
+
         torch.manual_seed(seed)
         np.random.seed(seed)
-        
+
         self.initialize()
 
     def initialize(self):
-        
+
         try:
             self.model = AutoModelForCausalLM.from_pretrained(
                 self.model_name,
@@ -491,8 +493,8 @@ class TransformersBackend(ModelBackend):
 
 
 def MAV(
-    model: str ,
-    prompt: str ,
+    model: str,
+    prompt: str,
     max_new_tokens: int = 200,
     aggregation: str = "l2",
     refresh_rate: float = 0.1,
@@ -506,8 +508,12 @@ def MAV(
     min_p: float = 0.0,
     repetition_penalty: float = 1.0,
     backend: str = "transformers",
-    seed: int = 42
+    seed: int = 42,
 ):
+
+    if model is None:
+        print("Prompt cannot be empty.")
+        return
 
     if prompt is None or len(prompt) == 0:
         print("Prompt cannot be empty.")
@@ -538,12 +544,8 @@ def MAV(
     )
 
 
-
-
 def main():
-    parser = argparse.ArgumentParser(
-        description="Model Activation Visualizer"
-    )
+    parser = argparse.ArgumentParser(description="Model Activation Visualizer")
     parser.add_argument(
         "--model",
         type=str,
@@ -654,17 +656,11 @@ def main():
         help="Random seed for reproducibility (default: 42)",
     )
 
-
     args = parser.parse_args()
-    
+
     args_dict = vars(args)
-    
-    MAV(
-        **args_dict
-    )
-    
 
-
+    MAV(**args_dict)
 
 
 if __name__ == "__main__":
