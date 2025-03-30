@@ -13,18 +13,15 @@ warnings.filterwarnings("ignore")
 def MAV(
     model: str,
     prompt: str,
-
     # Token & Output Control
     max_new_tokens: int = 200,
     limit_chars: int = 250,
-
     # Decoding & Sampling Parameters
     temp: float = 0.0,
     top_k: int = 50,
     top_p: float = 1.0,
     min_p: float = 0.0,
     repetition_penalty: float = 1.0,
-
     # Aggregation & Display Settings
     aggregation: str = "l2",
     refresh_rate: float = 0.1,
@@ -32,7 +29,6 @@ def MAV(
     selected_panels=None,
     num_grid_rows=1,
     max_bar_length=50,
-
     # Execution & Backend Settings
     device: str = "cpu",
     scale: str = "linear",
@@ -40,7 +36,6 @@ def MAV(
     seed: int = 42,
     model_obj=None,  # Pass model object compatible with backend
     tokenizer_obj=None,  # Pass tokenizer object compatible with backend
-
     # Version
     version=None,
 ):
@@ -75,18 +70,15 @@ def MAV(
         # Data & Model
         data_provider=mav_generator,
         model_name=model,
-
         # Token & Output Control
         max_new_tokens=max_new_tokens,
         limit_chars=limit_chars,
-
         # Decoding & Sampling Parameters
         temperature=temp,
         top_k=top_k,
         top_p=top_p,
         min_p=min_p,
         repetition_penalty=repetition_penalty,
-
         # Aggregation & Display Settings
         aggregation=aggregation,
         refresh_rate=refresh_rate,
@@ -95,11 +87,10 @@ def MAV(
         num_grid_rows=num_grid_rows,
         max_bar_length=max_bar_length,
         scale=scale,
-
         # Version
         version=version,
     )
-    
+
     manager.ui_loop(prompt)
 
 
@@ -256,37 +247,32 @@ def main():
         exit(0)
 
     MAV(
-    model=args.model,
-    prompt=args.prompt,
-
-    # Token & Output Control
-    max_new_tokens=args.max_new_tokens,
-    limit_chars=args.limit_chars,
-
-    # Decoding & Sampling Parameters
-    temp=args.temp,
-    top_k=args.top_k,
-    top_p=args.top_p,
-    min_p=args.min_p,
-    repetition_penalty=args.repetition_penalty,
-
-    # Aggregation & Display Settings
-    aggregation=args.aggregation,
-    refresh_rate=args.refresh_rate,
-    interactive=args.interactive,
-    selected_panels=args.selected_panels,
-    num_grid_rows=args.num_grid_rows,
-    max_bar_length=args.max_bar_length,
-    scale=args.scale,
-    
-    # Execution & Backend Settings
-    device=args.device,
-    backend=args.backend,
-    seed=args.seed,
-
-    # Version
-    version=version,
-)
+        model=args.model,
+        prompt=args.prompt,
+        # Token & Output Control
+        max_new_tokens=args.max_new_tokens,
+        limit_chars=args.limit_chars,
+        # Decoding & Sampling Parameters
+        temp=args.temp,
+        top_k=args.top_k,
+        top_p=args.top_p,
+        min_p=args.min_p,
+        repetition_penalty=args.repetition_penalty,
+        # Aggregation & Display Settings
+        aggregation=args.aggregation,
+        refresh_rate=args.refresh_rate,
+        interactive=args.interactive,
+        selected_panels=args.selected_panels,
+        num_grid_rows=args.num_grid_rows,
+        max_bar_length=args.max_bar_length,
+        scale=args.scale,
+        # Execution & Backend Settings
+        device=args.device,
+        backend=args.backend,
+        seed=args.seed,
+        # Version
+        version=version,
+    )
 
 
 if __name__ == "__main__":
