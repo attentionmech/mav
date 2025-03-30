@@ -90,6 +90,9 @@ You can replace `gpt2` with other Hugging Face models for example:
 
 `uv run examples/vis_train_loop.py`
 
+#### running MAV with custom panel selection and arrangement
+
+`uv run --with git+https://github.com/attentionmech/mav mav --model gpt2 --num-grid-rows 3 --selected-panels generated_text attention_entropy top_predictions --max-bar-length 20 --refresh-rate 0 --max-new-tokens 10000`
 
 ## Demos
 
@@ -97,5 +100,6 @@ You can replace `gpt2` with other Hugging Face models for example:
 - [limit chars](https://x.com/attentionmech/status/1905760510445850709)
 - [sample with temperature](https://x.com/attentionmech/status/1905886861245259857)
 - [running with custom model](https://x.com/attentionmech/status/1906172982294376755)
+- [panel selection](https://x.com/attentionmech/status/1906304032798339124)
 
 Note: explore it using the command line help as well, since many sampling params are exposed.
