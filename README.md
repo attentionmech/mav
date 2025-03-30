@@ -2,9 +2,9 @@
 
 
 <div align="center">
-<img width=350 height=300 src="https://github.com/user-attachments/assets/bd439d67-6537-42ec-8a45-5b4390b821f1"/>
+<img width=300 height=250 src="https://github.com/user-attachments/assets/bd439d67-6537-42ec-8a45-5b4390b821f1"/>
 </div>
-
+<br>
 
 <div align="center">
     <img src="https://img.shields.io/pypi/v/openmav.svg" alt="PyPI">
@@ -15,10 +15,7 @@
     <img src="https://img.shields.io/pypi/l/openmav" alt="License">
    <hr>
 </div>
-
 <br>
-<br>
-
 
 # Introduction
 
