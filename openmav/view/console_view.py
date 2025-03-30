@@ -74,8 +74,6 @@ class ConsoleMAV:
             ):
                 self._render_visualization(data)
 
-
-
                 if self.interactive:
                     user_input = self.console.input("")
                     if user_input.lower() == "q":
@@ -122,9 +120,10 @@ class ConsoleMAV:
                 border_style="yellow",
             ),
             "generated_text": Panel(
-                Text(data["generated_text"], style="bold bright_red")
-                .append(data["predicted_char"], style="bold on green"),
-                title=f"Generated text",
+                Text(data["generated_text"], style="bold bright_red").append(
+                    data["predicted_char"], style="bold on green"
+                ),
+                title="Generated text",
                 border_style="green",
             ),
         }
@@ -132,18 +131,25 @@ class ConsoleMAV:
         if selected_panels is None:
             selected_panels = list(panel_definitions.keys())
 
-        panels = [panel_definitions[key] for key in selected_panels if key in panel_definitions]
+        panels = [
+            panel_definitions[key]
+            for key in selected_panels
+            if key in panel_definitions
+        ]
         num_rows = max(1, num_rows)
-        num_columns = (len(panels) + num_rows - 1) // num_rows  # Best effort even distribution
-        
+        num_columns = (
+            len(panels) + num_rows - 1
+        ) // num_rows  # Best effort even distribution
+
+        title_bar = Layout(Panel("MAV", border_style="white"), size=3)
         rows = [Layout() for _ in range(num_rows)]
-        layout.split_column(*rows)
-        
+        layout.split_column(title_bar, *rows)
+
         for i in range(num_rows):
-            row_panels = panels[i * num_columns: (i + 1) * num_columns]
+            row_panels = panels[i * num_columns : (i + 1) * num_columns]
             if row_panels:
                 rows[i].split_row(*[Layout(panel) for panel in row_panels])
-        
+
         self.live.update(layout, refresh=True)
 
     def _create_activations_panel_content(self, mlp_normalized, mlp_activations):
@@ -179,15 +185,13 @@ class ConsoleMAV:
         # Create list of formatted entries
         entries = [
             f"[bold magenta]{self.backend.decode([token_id], clean_up_tokenization_spaces=True).strip()[:10] or ' ':<10}[/] "
-            f"([bold yellow]{prob:>5.1%}[/bold yellow], [bold cyan]{logit:>4.1f}[/bold cyan])"
+            f"([bold yellow]{prob:>5.1%}[/bold yellow], [bold cyan]{logit:>4.1f}[/bold cyan])\n"
             for token_id, prob, logit in zip(
                 top_ids.tolist(), top_probs.tolist(), logits[0, -1, top_ids].tolist()
             )
         ]
 
-        # Chunk into groups of 5 and join with newlines
-        chunked = [entries[i : i + 5] for i in range(0, len(entries), 5)]
-        return "\n".join("    ".join(chunk) for chunk in chunked)
+        return "\n".join(entry for entry in entries)
 
     def _create_prob_bin_panel(self, next_token_probs, num_bins=20):
         """
