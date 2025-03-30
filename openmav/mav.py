@@ -202,6 +202,8 @@ def main():
             "mlp_activations",
             "attention_entropy",
         ],
+        help="List of selected panels. Default: top_predictions, output_distribution, "
+         "generated_text, mlp_activations, attention_entropy."
     )
 
     parser.add_argument(
