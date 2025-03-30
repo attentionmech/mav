@@ -53,7 +53,7 @@ uv run --with git+https://github.com/attentionmech/mav mav --model gpt2 --prompt
    ```
 4. or Import
    ```python
-   from openmav import MAV
+   from openmav.mav import MAV
 
    MAV("gpt2", "Hello")
    ```
@@ -96,5 +96,6 @@ You can replace `gpt2` with other Hugging Face models for example:
 - [interactive mode](https://x.com/attentionmech/status/1905732784314081511)
 - [limit chars](https://x.com/attentionmech/status/1905760510445850709)
 - [sample with temperature](https://x.com/attentionmech/status/1905886861245259857)
+- [running with custom model](https://x.com/attentionmech/status/1906172982294376755)
 
 Note: explore it using the command line help as well, since many sampling params are exposed.
