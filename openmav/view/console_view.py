@@ -17,6 +17,7 @@ class ConsoleMAV:
     def __init__(
         self,
         data_provider,
+        model_name,
         refresh_rate=0.2,
         interactive=False,
         limit_chars=20,
@@ -31,6 +32,7 @@ class ConsoleMAV:
         max_bar_length=20,
         num_grid_rows=1,
         selected_panels=None,
+        version=None,
     ):
         self.console = Console()
         self.data_provider = data_provider
@@ -49,6 +51,8 @@ class ConsoleMAV:
         self.max_bar_length = max_bar_length
         self.num_grid_rows = num_grid_rows
         self.selected_panels = selected_panels
+        self.version = version
+        self.model_name = model_name
 
         
 
@@ -144,7 +148,7 @@ class ConsoleMAV:
             len(panels) + num_rows - 1
         ) // num_rows  # Best effort even distribution
 
-        title_bar = Layout(Panel("| OpenMAV |", border_style="white"), size=3)
+        title_bar = Layout(Panel(f"| OpenMAV v{self.version} | {self.model_name}", border_style="white"), size=3)
         rows = [Layout() for _ in range(num_rows)]
         layout.split_column(title_bar, *rows)
 

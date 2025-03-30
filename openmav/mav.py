@@ -32,6 +32,7 @@ def MAV(
     selected_panels=None,
     num_grid_rows=1,
     max_bar_length=50,
+    version=None,
 ):
 
     if model is None:
@@ -64,6 +65,7 @@ def MAV(
 
     manager = ConsoleMAV(
         data_provider=mav_generator,
+        model_name=model,
         refresh_rate=refresh_rate,
         interactive=interactive,
         limit_chars=limit_chars,
@@ -78,6 +80,7 @@ def MAV(
         max_bar_length=max_bar_length,
         num_grid_rows=num_grid_rows,
         selected_panels=selected_panels,
+        version=version,
     )
 
     manager.ui_loop(prompt)
@@ -221,12 +224,47 @@ def main():
         type=int,
         default=2,
     )
+    
+    parser.add_argument(
+        "--version",
+        action="store_true",
+        help="version of MAV"
+    )
+    
 
     args = parser.parse_args()
 
-    args_dict = vars(args)
 
-    MAV(**args_dict)
+    version = None
+    with open("VERSION", "r", encoding="utf-8") as fh:
+        version = fh.read()
+
+    if args.version:
+        print(version)
+        exit(0)
+
+    MAV(
+        model=args.model,
+        prompt=args.prompt,
+        max_new_tokens=args.max_new_tokens,
+        aggregation=args.aggregation,
+        refresh_rate=args.refresh_rate,
+        interactive=args.interactive,
+        device=args.device,
+        scale=args.scale,
+        limit_chars=args.limit_chars,
+        temp=args.temp,
+        top_k=args.top_k,
+        top_p=args.top_p,
+        min_p=args.min_p,
+        repetition_penalty=args.repetition_penalty,
+        backend=args.backend,
+        seed=args.seed,
+        selected_panels=args.selected_panels,
+        num_grid_rows=args.num_grid_rows,
+        max_bar_length=args.max_bar_length,
+        version=version
+    )
 
 
 if __name__ == "__main__":

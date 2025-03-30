@@ -4,9 +4,12 @@ from setuptools import setup, find_packages
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
+with open("VERSION", "r", encoding="utf-8") as fh:
+    version = fh.read()
+
 setup(
     name="openmav",
-    version="0.0.8",
+    version=version,
     packages=find_packages(),  # Automatically find packages inside the repo
     install_requires=[
         "rich",
