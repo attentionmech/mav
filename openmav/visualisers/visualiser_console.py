@@ -2,16 +2,15 @@ import time
 import numpy as np
 import torch
 
-
 from rich.console import Console
 from rich.layout import Layout
 from rich.live import Live
 from rich.panel import Panel
 from rich.text import Text
 
-from openmav.data_converter import DataConverter
+from openmav.converters.data_converter import DataConverter
 
-class ModelActivationVisualizer:
+class ConsoleMAV:
     def __init__(
         self,
         backend,

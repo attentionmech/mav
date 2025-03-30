@@ -2,7 +2,7 @@ import torch
 import numpy as np
 
 from transformers import AutoModelForCausalLM, AutoTokenizer
-from openmav.model_backend import ModelBackend
+from openmav.backends.model_backend import ModelBackend
 
 class TransformersBackend(ModelBackend):
     def __init__(self, model_name, model_obj=None, tokenizer_obj=None, device="cpu", seed=42):

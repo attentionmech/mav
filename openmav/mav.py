@@ -1,19 +1,11 @@
-# /// script
-# dependencies = [
-#   "rich",
-#   "torch",
-#   "transformers",
-# ]
-# ///
-
 # @author: attentionmech
 
 import argparse
 import warnings
 
 from openmav.converters.data_converter import DataConverter
-from openmav.transformers_backend import TransformersBackend
-from openmav.visualiser import ModelActivationVisualizer
+from openmav.backends.model_backend_transformers import TransformersBackend
+from openmav.visualisers.visualiser_console import ConsoleMAV
 
 warnings.filterwarnings("ignore")
 
@@ -51,7 +43,7 @@ def MAV(
     else:
         raise ValueError(f"Unsupported backend: {backend}")
 
-    visualizer = ModelActivationVisualizer(
+    visualizer = ConsoleMAV(
         backend=backend,
         max_new_tokens=max_new_tokens,
         aggregation=aggregation,
