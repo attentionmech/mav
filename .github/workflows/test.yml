@@ -1,4 +1,4 @@
-name: Test MAV Script
+name: build
 
 on:
   push:
