@@ -74,6 +74,8 @@ class ConsoleMAV:
             ):
                 self._render_visualization(data)
 
+
+
                 if self.interactive:
                     user_input = self.console.input("")
                     if user_input.lower() == "q":
@@ -86,55 +88,64 @@ class ConsoleMAV:
             self.live.stop()
             self.console.show_cursor(True)
 
-    
-    def _render_visualization(self, data, layout_format="horizontal"):
+    def _render_visualization(self, data, num_rows=1, selected_panels=None):
         """
         Handles UI updates based on provided data.
         """
         layout = Layout()
 
-        panels = [
-            Panel(
+        panel_definitions = {
+            "top_predictions": Panel(
                 self._create_top_predictions_panel_content(
                     data["top_ids"], data["top_probs"], data["logits"]
                 ),
                 title="Top Predictions",
                 border_style="blue",
             ),
-            Panel(
+            "mlp_activations": Panel(
                 self._create_activations_panel_content(
                     data["mlp_normalized"], data["mlp_activations"]
                 ),
                 title="MLP Activations",
                 border_style="cyan",
             ),
-            Panel(
+            "attention_entropy": Panel(
                 self._create_entropy_panel_content(
                     data["entropy_values"], data["entropy_normalized"]
                 ),
                 title="Attention Entropy",
                 border_style="magenta",
             ),
-            Panel(
+            "output_distribution": Panel(
                 self._create_prob_bin_panel(data["next_token_probs"]),
                 title="Output Distribution",
                 border_style="yellow",
             ),
-            Panel(
+            "generated_text": Panel(
                 Text(data["generated_text"], style="bold bright_red")
                 .append(data["predicted_char"], style="bold on green"),
-                title=f"MAV: {self.backend.model_name}",
+                title=f"Generated text",
                 border_style="green",
             ),
-        ]
+        }
 
-        if layout_format == "vertical":
-            layout.split_column(*[Layout(panel) for panel in panels])
-        else:
-            layout.split_row(*[Layout(panel) for panel in panels])
+        if selected_panels is None:
+            selected_panels = list(panel_definitions.keys())
 
+        panels = [panel_definitions[key] for key in selected_panels if key in panel_definitions]
+        num_rows = max(1, num_rows)
+        num_columns = (len(panels) + num_rows - 1) // num_rows  # Best effort even distribution
+        
+        rows = [Layout() for _ in range(num_rows)]
+        layout.split_column(*rows)
+        
+        for i in range(num_rows):
+            row_panels = panels[i * num_columns: (i + 1) * num_columns]
+            if row_panels:
+                rows[i].split_row(*[Layout(panel) for panel in row_panels])
+        
         self.live.update(layout, refresh=True)
-    
+
     def _create_activations_panel_content(self, mlp_normalized, mlp_activations):
         activations_str = ""
         for i, (mlp_act, raw_mlp) in enumerate(zip(mlp_normalized, mlp_activations)):
