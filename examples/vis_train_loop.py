@@ -12,12 +12,19 @@ from transformers import GPT2Config, GPT2LMHeadModel, GPT2Tokenizer, Trainer, Tr
 from datasets import load_dataset
 from openmav import MAV
 
+import warnings
+warnings.filterwarnings("ignore")
+
+
+DEVICE="mps" if torch.backends.mps.is_available() else "cuda" if torch.cuda.is_available() else "cpu"
+
 config = GPT2Config(
     vocab_size=50257,
     n_positions=1024,
     n_embd=256,
     n_layer=2,
     n_head=2,
+    attn_implementation="eager"
 )
 
 model = GPT2LMHeadModel(config)
@@ -34,7 +41,7 @@ tokenized_datasets = dataset.map(tokenize_function, batched=True, remove_columns
 data_collator = DataCollatorForLanguageModeling(tokenizer=tokenizer, mlm=False)
 
 training_args = TrainingArguments(
-    output_dir="./gpt2-small-tinystories",
+    # output_dir="./gpt2-small-tinystories",
     overwrite_output_dir=True,
     num_train_epochs=3,
     per_device_train_batch_size=8,
@@ -59,7 +66,7 @@ class InferenceCallback(TrainerCallback):
     def perform_inference(self, step):
         self.model.eval()
         with torch.no_grad():
-            MAV("gpt2", "Once upon a time", model_obj=self.model, tokenizer_obj=self.tokenizer, max_new_tokens=20, refresh_rate=0.02, device="mps")            
+            MAV("gpt2", "Once upon a time", model_obj=self.model, tokenizer_obj=self.tokenizer, max_new_tokens=20, refresh_rate=0.1, device=DEVICE)            
         self.model.train()
 
 trainer = Trainer(

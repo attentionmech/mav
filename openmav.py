@@ -447,13 +447,13 @@ class TransformersBackend(ModelBackend):
             else:
                 self.tokenizer = AutoTokenizer.from_pretrained(self.model_name)
 
-                if self.tokenizer.pad_token is None:
-                    self.tokenizer.pad_token = (
-                        self.tokenizer.eos_token or self.tokenizer.unk_token
-                    )
+            if self.tokenizer.pad_token is None:
+                self.tokenizer.pad_token = (
+                    self.tokenizer.eos_token or self.tokenizer.unk_token
+                )
 
-                if self.model.config.pad_token_id is None:
-                    self.model.config.pad_token_id = self.tokenizer.pad_token_id
+            if self.model.config.pad_token_id is None:
+                self.model.config.pad_token_id = self.tokenizer.pad_token_id
 
         except Exception as e:
             print(f"Error loading model: {e}")
