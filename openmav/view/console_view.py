@@ -1,12 +1,11 @@
 import time
-import numpy as np
 
+import numpy as np
 from rich.console import Console
 from rich.layout import Layout
 from rich.live import Live
 from rich.panel import Panel
 from rich.text import Text
-
 
 
 class ConsoleMAV:
@@ -54,8 +53,6 @@ class ConsoleMAV:
         self.version = version
         self.model_name = model_name
 
-        
-
     def ui_loop(self, prompt):
         """
         Runs the UI loop, updating the display with new data from MAVGenerator.
@@ -97,7 +94,10 @@ class ConsoleMAV:
         panel_definitions = {
             "top_predictions": Panel(
                 self._create_top_predictions_panel_content(
-                    data["decoded_tokens"], data["top_ids"], data["top_probs"], data["logits"]
+                    data["decoded_tokens"],
+                    data["top_ids"],
+                    data["top_probs"],
+                    data["logits"],
                 ),
                 title="Top Predictions",
                 border_style="blue",
@@ -138,17 +138,22 @@ class ConsoleMAV:
             for key in selected_panels
             if key in panel_definitions
         ]
-        
+
         if not panels:
             # print exception that no valid panels are provided
             raise ValueError("No valid panels provided")
-        
+
         num_rows = max(1, self.num_grid_rows)
         num_columns = (
             len(panels) + num_rows - 1
         ) // num_rows  # Best effort even distribution
 
-        title_bar = Layout(Panel(f"| OpenMAV v{self.version} | {self.model_name}", border_style="white"), size=3)
+        title_bar = Layout(
+            Panel(
+                f"| OpenMAV v{self.version} | {self.model_name}", border_style="white"
+            ),
+            size=3,
+        )
         rows = [Layout() for _ in range(num_rows)]
         layout.split_column(title_bar, *rows)
 
@@ -188,10 +193,10 @@ class ConsoleMAV:
             entropy_str += f"[bold white]Layer {i + 1:2d}[/] | [bold yellow]:[/] [{entropy_bar.ljust(self.max_bar_length)}] {entropy_val:.1f}\n"
         return entropy_str
 
+    def _create_top_predictions_panel_content(
+        self, decoded_tokens, top_ids, top_probs, logits
+    ):
 
-
-    def _create_top_predictions_panel_content(self, decoded_tokens, top_ids, top_probs, logits):
-        
         entries = [
             f"[bold magenta]{token:<10}[/] "
             f"([bold yellow]{prob:>5.1%}[/bold yellow], [bold cyan]{logit:>4.1f}[/bold cyan])\n"
@@ -201,7 +206,6 @@ class ConsoleMAV:
         ]
 
         return "\n".join(entries)
-
 
     def _create_prob_bin_panel(self, next_token_probs, num_bins=20):
         """

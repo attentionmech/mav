@@ -55,13 +55,12 @@ def MAV(
         raise ValueError(f"Unsupported backend: {backend}")
 
     mav_generator = MAVGenerator(
-            backend,
-            max_new_tokens=max_new_tokens,
-            aggregation=aggregation,
-            scale=scale,
-            max_bar_length=max_bar_length,
+        backend,
+        max_new_tokens=max_new_tokens,
+        aggregation=aggregation,
+        scale=scale,
+        max_bar_length=max_bar_length,
     )
-
 
     manager = ConsoleMAV(
         data_provider=mav_generator,
@@ -202,7 +201,8 @@ def main():
         "--max-bar-length",
         type=int,
         default=50,
-        help="UI bar max length counted in square characters")
+        help="UI bar max length counted in square characters",
+    )
 
     parser.add_argument(
         "--selected-panels",
@@ -216,7 +216,7 @@ def main():
             "attention_entropy",
         ],
         help="List of selected panels. Default: top_predictions, output_distribution, "
-         "generated_text, mlp_activations, attention_entropy."
+        "generated_text, mlp_activations, attention_entropy.",
     )
 
     parser.add_argument(
@@ -224,16 +224,10 @@ def main():
         type=int,
         default=2,
     )
-    
-    parser.add_argument(
-        "--version",
-        action="store_true",
-        help="version of MAV"
-    )
-    
+
+    parser.add_argument("--version", action="store_true", help="version of MAV")
 
     args = parser.parse_args()
-
 
     version = None
     with open("VERSION", "r", encoding="utf-8") as fh:
@@ -263,7 +257,7 @@ def main():
         selected_panels=args.selected_panels,
         num_grid_rows=args.num_grid_rows,
         max_bar_length=args.max_bar_length,
-        version=version
+        version=version,
     )
 
 

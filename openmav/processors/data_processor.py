@@ -1,4 +1,5 @@
 import torch
+
 from openmav.converters.data_converter import DataConverter
 
 
@@ -42,12 +43,16 @@ class MAVDataProcessor:
         predicted_char = backend.decode(
             [next_token_id], clean_up_tokenization_spaces=True
         )
-        
 
-        decoded_tokens =[(self.backend.decode([token_id], clean_up_tokenization_spaces=True).strip()[:10] or ' ')
+        decoded_tokens = [
+            (
+                self.backend.decode(
+                    [token_id], clean_up_tokenization_spaces=True
+                ).strip()[:10]
+                or " "
+            )
             for token_id in top_ids.tolist()
         ]
-
 
         return {
             "mlp_activations": mlp_activations,

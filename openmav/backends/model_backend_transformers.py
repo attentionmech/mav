@@ -1,7 +1,7 @@
-import torch
 import numpy as np
-
+import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
+
 from openmav.backends.model_backend import ModelBackend
 
 
