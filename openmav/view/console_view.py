@@ -95,7 +95,7 @@ class ConsoleMAV:
         Handles UI updates based on provided data.
         """
         layout = Layout()
-        
+
         selected_panels = self.selected_panels
 
         panel_definitions = {
@@ -126,9 +126,9 @@ class ConsoleMAV:
                 border_style="yellow",
             ),
             "generated_text": Panel(
-                Text(data["generated_text"][-self.limit_chars:], style="bold bright_red").append(
-                    data["predicted_char"], style="bold on green"
-                ),
+                Text(
+                    data["generated_text"][-self.limit_chars :], style="bold bright_red"
+                ).append(data["predicted_char"], style="bold on green"),
                 title="Generated text",
                 border_style="green",
             ),

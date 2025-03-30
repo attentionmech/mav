@@ -67,7 +67,7 @@ def MAV(
         scale=scale,
         max_bar_length=max_bar_length,
         num_grid_rows=num_grid_rows,
-        selected_panels=selected_panels
+        selected_panels=selected_panels,
     )
 
     manager.ui_loop(prompt)
@@ -184,20 +184,25 @@ def main():
         default=42,
         help="Random seed for reproducibility (default: 42)",
     )
-    
+
     parser.add_argument(
         "--selected-panels",
         type=str,
         nargs="+",
-        default=["top_predictions", "mlp_activations", "attention_entropy", "output_distribution", "generated_text"],
+        default=[
+            "top_predictions",
+            "mlp_activations",
+            "attention_entropy",
+            "output_distribution",
+            "generated_text",
+        ],
     )
-    
+
     parser.add_argument(
         "--num-grid-rows",
         type=int,
         default=1,
     )
-    
 
     args = parser.parse_args()
 
