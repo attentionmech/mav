@@ -86,64 +86,55 @@ class ConsoleMAV:
             self.live.stop()
             self.console.show_cursor(True)
 
-    def _render_visualization(self, data):
+    
+    def _render_visualization(self, data, layout_format="horizontal"):
         """
         Handles UI updates based on provided data.
         """
         layout = Layout()
 
-        activations_panel = Panel(
-            self._create_activations_panel_content(
-                data["mlp_normalized"], data["mlp_activations"]
+        panels = [
+            Panel(
+                self._create_top_predictions_panel_content(
+                    data["top_ids"], data["top_probs"], data["logits"]
+                ),
+                title="Top Predictions",
+                border_style="blue",
             ),
-            title="MLP Activations",
-            border_style="cyan",
-        )
-
-        entropy_panel = Panel(
-            self._create_entropy_panel_content(
-                data["entropy_values"], data["entropy_normalized"]
+            Panel(
+                self._create_activations_panel_content(
+                    data["mlp_normalized"], data["mlp_activations"]
+                ),
+                title="MLP Activations",
+                border_style="cyan",
             ),
-            title="Attention Entropy",
-            border_style="magenta",
-        )
-
-        predictions_panel = Panel(
-            self._create_top_predictions_panel_content(
-                data["top_ids"], data["top_probs"], data["logits"]
+            Panel(
+                self._create_entropy_panel_content(
+                    data["entropy_values"], data["entropy_normalized"]
+                ),
+                title="Attention Entropy",
+                border_style="magenta",
             ),
-            title="Top Predictions",
-            border_style="blue",
-        )
+            Panel(
+                self._create_prob_bin_panel(data["next_token_probs"]),
+                title="Output Distribution",
+                border_style="yellow",
+            ),
+            Panel(
+                Text(data["generated_text"], style="bold bright_red")
+                .append(data["predicted_char"], style="bold on green"),
+                title=f"MAV: {self.backend.model_name}",
+                border_style="green",
+            ),
+        ]
 
-        prob_bin_panel = Panel(
-            self._create_prob_bin_panel(data["next_token_probs"]),
-            title="Output Distribution",
-            border_style="yellow",
-        )
-
-        highlighted_text = Text(data["generated_text"], style="bold bright_red")
-        highlighted_text.append(data["predicted_char"], style="bold on green")
-        top_panel = Panel(
-            highlighted_text,
-            title=f"MAV: {self.backend.model_name}",
-            border_style="green",
-        )
-
-        layout.split_column(
-            Layout(predictions_panel, size=5),
-            Layout(name="bottom_panel"),
-        )
-
-        layout["bottom_panel"].split_row(
-            Layout(top_panel, ratio=2),
-            Layout(activations_panel, ratio=3),
-            Layout(entropy_panel, ratio=3),
-            Layout(prob_bin_panel, ratio=2),
-        )
+        if layout_format == "vertical":
+            layout.split_column(*[Layout(panel) for panel in panels])
+        else:
+            layout.split_row(*[Layout(panel) for panel in panels])
 
         self.live.update(layout, refresh=True)
-
+    
     def _create_activations_panel_content(self, mlp_normalized, mlp_activations):
         activations_str = ""
         for i, (mlp_act, raw_mlp) in enumerate(zip(mlp_normalized, mlp_activations)):
