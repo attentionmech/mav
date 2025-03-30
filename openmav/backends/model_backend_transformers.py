@@ -4,8 +4,11 @@ import numpy as np
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from openmav.backends.model_backend import ModelBackend
 
+
 class TransformersBackend(ModelBackend):
-    def __init__(self, model_name, model_obj=None, tokenizer_obj=None, device="cpu", seed=42):
+    def __init__(
+        self, model_name, model_obj=None, tokenizer_obj=None, device="cpu", seed=42
+    ):
         self.model_name = model_name
         self.device = device
         self.model_obj = model_obj
@@ -29,7 +32,6 @@ class TransformersBackend(ModelBackend):
                     output_attentions=True,
                     attn_implementation="eager",
                 ).to(self.device)
-
 
             if self.tokenizer_obj:
                 self.tokenizer = self.tokenizer_obj
@@ -73,8 +75,7 @@ class TransformersBackend(ModelBackend):
                 output_scores=True,
                 output_hidden_states=True,
                 output_attentions=True,
-                pad_token_id=self.tokenizer.eos_token_id #warning TODO: find correct way to handle this
-
+                pad_token_id=self.tokenizer.eos_token_id,  # warning TODO: find correct way to handle this
             )
 
         return {

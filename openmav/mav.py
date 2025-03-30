@@ -3,11 +3,11 @@
 import argparse
 import warnings
 
-from openmav.converters.data_converter import DataConverter
 from openmav.backends.model_backend_transformers import TransformersBackend
-from openmav.visualisers.visualiser_console import ConsoleMAV
+from openmav.view.console_view import ConsoleMAV
 
 warnings.filterwarnings("ignore")
+
 
 def MAV(
     model: str,
@@ -26,8 +26,8 @@ def MAV(
     repetition_penalty: float = 1.0,
     backend: str = "transformers",
     seed: int = 42,
-    model_obj=None, # pass model object compatible to your backend
-    tokenizer_obj=None, # pass tokenizer object compatible to your backend
+    model_obj=None,  # pass model object compatible to your backend
+    tokenizer_obj=None,  # pass tokenizer object compatible to your backend
 ):
 
     if model is None:
@@ -39,7 +39,13 @@ def MAV(
         return
 
     if backend == "transformers":
-        backend = TransformersBackend(model_name=model, device=device, seed=seed, model_obj=model_obj, tokenizer_obj=tokenizer_obj)
+        backend = TransformersBackend(
+            model_name=model,
+            device=device,
+            seed=seed,
+            model_obj=model_obj,
+            tokenizer_obj=tokenizer_obj,
+        )
     else:
         raise ValueError(f"Unsupported backend: {backend}")
 
@@ -51,16 +57,14 @@ def MAV(
         interactive=interactive,
         scale=scale,
         limit_chars=limit_chars,
-    )
-
-    visualizer.generate_with_visualization(
-        prompt,
         temperature=temp,
         top_k=top_k,
         top_p=top_p,
         min_p=min_p,
         repetition_penalty=repetition_penalty,
     )
+
+    visualizer.ui_loop(prompt)
 
 
 def main():
