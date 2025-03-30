@@ -196,9 +196,9 @@ def main():
         type=str,
         nargs="+",
         default=[
+            "generated_text",
             "top_predictions",
             "output_distribution",
-            "generated_text",
             "mlp_activations",
             "attention_entropy",
         ],
