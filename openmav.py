@@ -391,7 +391,7 @@ class ModelActivationVisualizer:
 
 
 class ModelBackend:
-    def __init__(self, model_name, device="cpu"):
+    def __init__(self, model_name, model_obj=None, tokenizer_obj=None, device="cpu"):
         pass
 
     def initialize(self):
@@ -416,9 +416,11 @@ class ModelBackend:
 
 
 class TransformersBackend(ModelBackend):
-    def __init__(self, model_name, device="cpu", seed=42):
+    def __init__(self, model_name, model_obj=None, tokenizer_obj=None, device="cpu", seed=42):
         self.model_name = model_name
         self.device = device
+        self.model_obj = model_obj
+        self.tokenizer_obj = tokenizer_obj
 
         torch.manual_seed(seed)
         np.random.seed(seed)
@@ -428,23 +430,30 @@ class TransformersBackend(ModelBackend):
     def initialize(self):
 
         try:
-            self.model = AutoModelForCausalLM.from_pretrained(
-                self.model_name,
-                return_dict_in_generate=True,
-                output_hidden_states=True,
-                output_attentions=True,
-                attn_implementation="eager",
-            ).to(self.device)
+            if self.model_obj:
+                self.model = self.model_obj.to(self.device)
+            else:
+                self.model = AutoModelForCausalLM.from_pretrained(
+                    self.model_name,
+                    return_dict_in_generate=True,
+                    output_hidden_states=True,
+                    output_attentions=True,
+                    attn_implementation="eager",
+                ).to(self.device)
 
-            self.tokenizer = AutoTokenizer.from_pretrained(self.model_name)
 
-            if self.tokenizer.pad_token is None:
-                self.tokenizer.pad_token = (
-                    self.tokenizer.eos_token or self.tokenizer.unk_token
-                )
+            if self.tokenizer_obj:
+                self.tokenizer = self.tokenizer_obj
+            else:
+                self.tokenizer = AutoTokenizer.from_pretrained(self.model_name)
 
-            if self.model.config.pad_token_id is None:
-                self.model.config.pad_token_id = self.tokenizer.pad_token_id
+                if self.tokenizer.pad_token is None:
+                    self.tokenizer.pad_token = (
+                        self.tokenizer.eos_token or self.tokenizer.unk_token
+                    )
+
+                if self.model.config.pad_token_id is None:
+                    self.model.config.pad_token_id = self.tokenizer.pad_token_id
 
         except Exception as e:
             print(f"Error loading model: {e}")
@@ -509,10 +518,12 @@ def MAV(
     repetition_penalty: float = 1.0,
     backend: str = "transformers",
     seed: int = 42,
+    model_obj=None, # pass model object compatible to your backend
+    tokenizer_obj=None, # pass tokenizer object compatible to your backend
 ):
 
     if model is None:
-        print("Prompt cannot be empty.")
+        print("model name cannot be empty.")
         return
 
     if prompt is None or len(prompt) == 0:
@@ -520,7 +531,7 @@ def MAV(
         return
 
     if backend == "transformers":
-        backend = TransformersBackend(model, device, seed)
+        backend = TransformersBackend(model_name=model, device=device, seed=seed, model_obj=model_obj, tokenizer_obj=tokenizer_obj)
     else:
         raise ValueError(f"Unsupported backend: {backend}")
 
