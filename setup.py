@@ -1,13 +1,13 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 # Read the content from README file
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setup(
-    name="openmav",  # Users install with `pip install openmav`
-    version="0.0.6",
-    py_modules=["openmav"],  # Rename your script to openmav.py
+    name="openmav",
+    version="0.0.7",
+    packages=find_packages(),  # Automatically find packages inside the repo
     install_requires=[
         "rich",
         "torch",
@@ -15,14 +15,14 @@ setup(
     ],
     entry_points={
         "console_scripts": [
-            "mav=openmav:main",  # CLI command remains `mav`, runs `main()` from `openmav.py`
+            "mav=openmav.mav:main",  # Update path since mav.py is inside openmav/
         ],
     },
     author="attentionmech",
     author_email="attentionmech@gmail.com",
-    description="Model Activation Visualizer",
-    long_description=long_description,  # Add long description
-    long_description_content_type="text/markdown",  # Use "text/x-rst" if using reStructuredText
+    description="MAV",
+    long_description=long_description,
+    long_description_content_type="text/markdown",
     url="https://github.com/attentionmech/mav",
     classifiers=[
         "Programming Language :: Python :: 3",
@@ -30,4 +30,3 @@ setup(
     ],
     python_requires=">=3.6",
 )
-
