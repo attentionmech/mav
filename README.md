@@ -87,6 +87,14 @@ You can replace `gpt2` with other Hugging Face models for example:
 - `gpt2-medium`
 - `gpt2-large`
 
+
+## Examples
+
+#### running MAV with a training loop with a custom model (not pretrained one)
+
+`uv run examples/vis_train_loop.py`
+
+
 ## Demos
 
 - [interactive mode](https://x.com/attentionmech/status/1905732784314081511)
