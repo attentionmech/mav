@@ -3,7 +3,7 @@
 #   "datasets",
 #   "torch",
 #   "transformers[torch]",
-#   "openmav@git+https://github.com/attentionmech/mav@main",
+#   "openmav@git+https://github.com/attentionmech/mav",
 # ]
 # ///
 
