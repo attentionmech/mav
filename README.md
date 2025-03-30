@@ -63,7 +63,7 @@ uv run --with git+https://github.com/attentionmech/mav mav --model gpt2 --prompt
    ```python
    from openmav import MAV
 
-   MAV("gpt", "Hello")
+   MAV("gpt2", "Hello")
    ```
 
 #### Locally from scratch
