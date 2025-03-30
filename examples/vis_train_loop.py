@@ -41,16 +41,16 @@ tokenized_datasets = dataset.map(tokenize_function, batched=True, remove_columns
 data_collator = DataCollatorForLanguageModeling(tokenizer=tokenizer, mlm=False)
 
 training_args = TrainingArguments(
-    # output_dir="./gpt2-small-tinystories",
-    overwrite_output_dir=True,
+    output_dir="/tmp/temp_output",
+    # output_dir="nul",  # Windows (uncomment if using Windows)
+    overwrite_output_dir=False,
     num_train_epochs=3,
     per_device_train_batch_size=8,
-    save_steps=500,
-    save_total_limit=2,
-    logging_dir="./logs",
-    logging_steps=100,
-    report_to="none",
+    save_strategy="no",  # Disables checkpointing
+    logging_dir=None,  # Prevents logging to disk
+    report_to="none",  # No logging/reporting
 )
+
 
 class InferenceCallback(TrainerCallback):
     def __init__(self, tokenizer, model, eval_dataset, eval_steps=100):
