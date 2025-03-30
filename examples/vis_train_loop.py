@@ -21,10 +21,11 @@ config = GPT2Config(
 )
 
 model = GPT2LMHeadModel(config)
-device = torch.device("cpu")
-model.to(device)
 tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
 tokenizer.pad_token = tokenizer.eos_token
+
+model.to(torch.device("cpu"))
+
 
 dataset = load_dataset("roneneldan/TinyStories", split="train[:1%]")
 
@@ -61,8 +62,7 @@ class InferenceCallback(TrainerCallback):
     def perform_inference(self, step):
         self.model.eval()
         with torch.no_grad():
-            MAV("gpt2", "Once upon a time", model_obj=self.model, tokenizer_obj=self.tokenizer, max_new_tokens=20, refresh_rate=0.02, device="cpu")            
-
+            MAV("gpt2", "Once upon a time", model_obj=self.model, tokenizer_obj=self.tokenizer, max_new_tokens=20, refresh_rate=0.02, device="mps")            
         self.model.train()
 
 trainer = Trainer(
@@ -70,7 +70,7 @@ trainer = Trainer(
     args=training_args,
     train_dataset=tokenized_datasets,
     data_collator=data_collator,
-    callbacks=[InferenceCallback(tokenizer, model, tokenized_datasets)]
+    callbacks=[InferenceCallback(tokenizer, model, tokenized_datasets)],
 )
 
 trainer.train()
