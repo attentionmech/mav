@@ -28,6 +28,9 @@ def MAV(
     seed: int = 42,
     model_obj=None,  # pass model object compatible to your backend
     tokenizer_obj=None,  # pass tokenizer object compatible to your backend
+    selected_panels=None,
+    num_grid_rows=1,
+    max_bar_length=20,
 ):
 
     if model is None:
@@ -49,22 +52,25 @@ def MAV(
     else:
         raise ValueError(f"Unsupported backend: {backend}")
 
-    visualizer = ConsoleMAV(
+    manager = ConsoleMAV(
         backend=backend,
-        max_new_tokens=max_new_tokens,
-        aggregation=aggregation,
         refresh_rate=refresh_rate,
         interactive=interactive,
-        scale=scale,
         limit_chars=limit_chars,
         temperature=temp,
         top_k=top_k,
         top_p=top_p,
         min_p=min_p,
         repetition_penalty=repetition_penalty,
+        max_new_tokens=max_new_tokens,
+        aggregation=aggregation,
+        scale=scale,
+        max_bar_length=max_bar_length,
+        num_grid_rows=num_grid_rows,
+        selected_panels=selected_panels
     )
 
-    visualizer.ui_loop(prompt)
+    manager.ui_loop(prompt)
 
 
 def main():
@@ -178,6 +184,20 @@ def main():
         default=42,
         help="Random seed for reproducibility (default: 42)",
     )
+    
+    parser.add_argument(
+        "--selected-panels",
+        type=str,
+        nargs="+",
+        default=["top_predictions", "mlp_activations", "attention_entropy", "output_distribution", "generated_text"],
+    )
+    
+    parser.add_argument(
+        "--num-grid-rows",
+        type=int,
+        default=1,
+    )
+    
 
     args = parser.parse_args()
 

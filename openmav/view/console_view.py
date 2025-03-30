@@ -31,6 +31,8 @@ class ConsoleMAV:
         aggregation="l2",
         scale="linear",
         max_bar_length=20,
+        num_grid_rows=1,
+        selected_panels=None,
     ):
         self.backend = backend
         self.console = Console()
@@ -47,6 +49,8 @@ class ConsoleMAV:
         self.aggregation = aggregation
         self.scale = scale
         self.max_bar_length = max_bar_length
+        self.num_grid_rows = num_grid_rows
+        self.selected_panels = selected_panels
 
         self.generator = MAVGenerator(
             backend,
@@ -86,11 +90,13 @@ class ConsoleMAV:
             self.live.stop()
             self.console.show_cursor(True)
 
-    def _render_visualization(self, data, num_rows=1, selected_panels=None):
+    def _render_visualization(self, data):
         """
         Handles UI updates based on provided data.
         """
         layout = Layout()
+        
+        selected_panels = self.selected_panels
 
         panel_definitions = {
             "top_predictions": Panel(
@@ -120,7 +126,7 @@ class ConsoleMAV:
                 border_style="yellow",
             ),
             "generated_text": Panel(
-                Text(data["generated_text"], style="bold bright_red").append(
+                Text(data["generated_text"][-self.limit_chars:], style="bold bright_red").append(
                     data["predicted_char"], style="bold on green"
                 ),
                 title="Generated text",
@@ -136,7 +142,7 @@ class ConsoleMAV:
             for key in selected_panels
             if key in panel_definitions
         ]
-        num_rows = max(1, num_rows)
+        num_rows = max(1, self.num_grid_rows)
         num_columns = (
             len(panels) + num_rows - 1
         ) // num_rows  # Best effort even distribution
