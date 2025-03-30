@@ -3,7 +3,6 @@
 #   "rich",
 #   "torch",
 #   "transformers",
-#   "numpy",
 # ]
 # ///
 
@@ -415,12 +414,17 @@ class ModelBackend:
 
 
 class TransformersBackend(ModelBackend):
-    def __init__(self, model_name, device="cpu"):
+    def __init__(self, model_name, device="cpu", seed=42):
         self.model_name = model_name
         self.device = device
+        
+        torch.manual_seed(seed)
+        np.random.seed(seed)
+        
         self.initialize()
 
     def initialize(self):
+        
         try:
             self.model = AutoModelForCausalLM.from_pretrained(
                 self.model_name,
@@ -484,6 +488,56 @@ class TransformersBackend(ModelBackend):
 
     def decode(self, token_ids, **kwargs):
         return self.tokenizer.decode(token_ids, **kwargs)
+
+
+def MAV(
+    model: str ,
+    prompt: str ,
+    max_new_tokens: int = 200,
+    aggregation: str = "l2",
+    refresh_rate: float = 0.1,
+    interactive: bool = False,
+    device: str = "cpu",
+    scale: str = "linear",
+    limit_chars: int = 250,
+    temp: float = 0.0,
+    top_k: int = 50,
+    top_p: float = 1.0,
+    min_p: float = 0.0,
+    repetition_penalty: float = 1.0,
+    backend: str = "transformers",
+    seed: int = 42
+):
+
+    if prompt is None or len(prompt) == 0:
+        print("Prompt cannot be empty.")
+        return
+
+    if backend == "transformers":
+        backend = TransformersBackend(model, device, seed)
+    else:
+        raise ValueError(f"Unsupported backend: {backend}")
+
+    visualizer = ModelActivationVisualizer(
+        backend=backend,
+        max_new_tokens=max_new_tokens,
+        aggregation=aggregation,
+        refresh_rate=refresh_rate,
+        interactive=interactive,
+        scale=scale,
+        limit_chars=limit_chars,
+    )
+
+    visualizer.generate_with_visualization(
+        prompt,
+        temperature=temp,
+        top_k=top_k,
+        top_p=top_p,
+        min_p=min_p,
+        repetition_penalty=repetition_penalty,
+    )
+
+
 
 
 def main():
@@ -600,40 +654,17 @@ def main():
         help="Random seed for reproducibility (default: 42)",
     )
 
-    torch.manual_seed(parser.parse_args().seed)
-    np.random.seed(parser.parse_args().seed)
 
     args = parser.parse_args()
-
-    if args.prompt is None or len(args.prompt) == 0:
-        print("Prompt cannot be empty.")
-        return
-
-    backend = None
-
-    if args.backend == "transformers":
-        backend = TransformersBackend(args.model, args.device)
-    else:
-        raise ValueError(f"Unsupported backend: {args.backend}")
-
-    visualizer = ModelActivationVisualizer(
-        backend=backend,
-        max_new_tokens=args.max_new_tokens,
-        aggregation=args.aggregation,
-        refresh_rate=args.refresh_rate,
-        interactive=args.interactive,
-        scale=args.scale,
-        limit_chars=args.limit_chars,
+    
+    args_dict = vars(args)
+    
+    MAV(
+        **args_dict
     )
+    
 
-    visualizer.generate_with_visualization(
-        args.prompt,
-        temperature=args.temp,
-        top_k=args.top_k,
-        top_p=args.top_p,
-        min_p=args.min_p,
-        repetition_penalty=args.repetition_penalty,
-    )
+
 
 
 if __name__ == "__main__":
