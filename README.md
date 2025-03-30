@@ -18,7 +18,7 @@
 
 # Introduction
 
-MAV or Model Activation Visualiser
+MAV
 
 ## Getting started  
 
