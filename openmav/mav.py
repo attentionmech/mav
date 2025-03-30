@@ -238,9 +238,7 @@ def main():
 
     args = parser.parse_args()
 
-    version = None
-    with open("VERSION", "r", encoding="utf-8") as fh:
-        version = fh.read()
+    version = "0.0.8"
 
     if args.version:
         print(version)
