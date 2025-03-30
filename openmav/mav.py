@@ -30,7 +30,7 @@ def MAV(
     tokenizer_obj=None,  # pass tokenizer object compatible to your backend
     selected_panels=None,
     num_grid_rows=1,
-    max_bar_length=20,
+    max_bar_length=50,
 ):
 
     if model is None:
@@ -186,22 +186,28 @@ def main():
     )
 
     parser.add_argument(
+        "--max-bar-length",
+        type=int,
+        default=50,
+        help="UI bar max length counted in square characters")
+
+    parser.add_argument(
         "--selected-panels",
         type=str,
         nargs="+",
         default=[
             "top_predictions",
-            "mlp_activations",
-            "attention_entropy",
             "output_distribution",
             "generated_text",
+            "mlp_activations",
+            "attention_entropy",
         ],
     )
 
     parser.add_argument(
         "--num-grid-rows",
         type=int,
-        default=1,
+        default=2,
     )
 
     args = parser.parse_args()

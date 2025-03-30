@@ -142,6 +142,11 @@ class ConsoleMAV:
             for key in selected_panels
             if key in panel_definitions
         ]
+        
+        if not panels:
+            # print exception that no valid panels are provided
+            raise ValueError("No valid panels provided")
+        
         num_rows = max(1, self.num_grid_rows)
         num_columns = (
             len(panels) + num_rows - 1

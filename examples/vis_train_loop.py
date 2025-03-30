@@ -12,11 +12,23 @@
 
 import os
 import torch
-from transformers import GPT2Config, GPT2LMHeadModel, GPT2Tokenizer, Trainer, TrainingArguments, DataCollatorForLanguageModeling, TrainerCallback
+from transformers import (
+    GPT2Config,
+    GPT2LMHeadModel,
+    GPT2Tokenizer,
+    Trainer,
+    TrainingArguments,
+    DataCollatorForLanguageModeling,
+    TrainerCallback,
+)
 from datasets import load_dataset
 from openmav.mav import MAV
 
-DEVICE="mps" if torch.backends.mps.is_available() else "cuda" if torch.cuda.is_available() else "cpu"
+DEVICE = (
+    "mps"
+    if torch.backends.mps.is_available()
+    else "cuda" if torch.cuda.is_available() else "cpu"
+)
 
 config = GPT2Config(
     vocab_size=50257,
@@ -24,7 +36,7 @@ config = GPT2Config(
     n_embd=256,
     n_layer=2,
     n_head=2,
-    attn_implementation="eager"
+    attn_implementation="eager",
 )
 
 model = GPT2LMHeadModel(config)
@@ -33,10 +45,16 @@ tokenizer.pad_token = tokenizer.eos_token
 
 dataset = load_dataset("roneneldan/TinyStories", split="train[:1%]")
 
-def tokenize_function(examples):
-    return tokenizer(examples["text"], padding="max_length", truncation=True, max_length=128)
 
-tokenized_datasets = dataset.map(tokenize_function, batched=True, remove_columns=["text"])
+def tokenize_function(examples):
+    return tokenizer(
+        examples["text"], padding="max_length", truncation=True, max_length=128
+    )
+
+
+tokenized_datasets = dataset.map(
+    tokenize_function, batched=True, remove_columns=["text"]
+)
 
 data_collator = DataCollatorForLanguageModeling(tokenizer=tokenizer, mlm=False)
 
@@ -66,8 +84,18 @@ class InferenceCallback(TrainerCallback):
     def perform_inference(self, step):
         self.model.eval()
         with torch.no_grad():
-            MAV("gpt2", "Once upon a time", model_obj=self.model, tokenizer_obj=self.tokenizer, max_new_tokens=20, refresh_rate=0.1, device=DEVICE)            
+            MAV(
+                "gpt2",
+                "Once upon a time",
+                model_obj=self.model,
+                tokenizer_obj=self.tokenizer,
+                max_new_tokens=20,
+                refresh_rate=0.1,
+                num_grid_rows=2,
+                device=DEVICE,
+            )
         self.model.train()
+
 
 trainer = Trainer(
     model=model,
