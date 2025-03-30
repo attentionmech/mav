@@ -1,7 +1,8 @@
 import torch
 import numpy as np
 
-
+# converter won't import backend 
+# processor can import backend.. that'as the distinction
 class DataConverter:
 
     @staticmethod
