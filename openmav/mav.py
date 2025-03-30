@@ -13,28 +13,37 @@ warnings.filterwarnings("ignore")
 def MAV(
     model: str,
     prompt: str,
+
+    # Token & Output Control
     max_new_tokens: int = 200,
-    aggregation: str = "l2",
-    refresh_rate: float = 0.1,
-    interactive: bool = False,
-    device: str = "cpu",
-    scale: str = "linear",
     limit_chars: int = 250,
+
+    # Decoding & Sampling Parameters
     temp: float = 0.0,
     top_k: int = 50,
     top_p: float = 1.0,
     min_p: float = 0.0,
     repetition_penalty: float = 1.0,
-    backend: str = "transformers",
-    seed: int = 42,
-    model_obj=None,  # pass model object compatible to your backend
-    tokenizer_obj=None,  # pass tokenizer object compatible to your backend
+
+    # Aggregation & Display Settings
+    aggregation: str = "l2",
+    refresh_rate: float = 0.1,
+    interactive: bool = False,
     selected_panels=None,
     num_grid_rows=1,
     max_bar_length=50,
+
+    # Execution & Backend Settings
+    device: str = "cpu",
+    scale: str = "linear",
+    backend: str = "transformers",
+    seed: int = 42,
+    model_obj=None,  # Pass model object compatible with backend
+    tokenizer_obj=None,  # Pass tokenizer object compatible with backend
+
+    # Version
     version=None,
 ):
-
     if model is None:
         print("model name cannot be empty.")
         return
@@ -63,25 +72,34 @@ def MAV(
     )
 
     manager = ConsoleMAV(
+        # Data & Model
         data_provider=mav_generator,
         model_name=model,
-        refresh_rate=refresh_rate,
-        interactive=interactive,
+
+        # Token & Output Control
+        max_new_tokens=max_new_tokens,
         limit_chars=limit_chars,
+
+        # Decoding & Sampling Parameters
         temperature=temp,
         top_k=top_k,
         top_p=top_p,
         min_p=min_p,
         repetition_penalty=repetition_penalty,
-        max_new_tokens=max_new_tokens,
+
+        # Aggregation & Display Settings
         aggregation=aggregation,
-        scale=scale,
-        max_bar_length=max_bar_length,
-        num_grid_rows=num_grid_rows,
+        refresh_rate=refresh_rate,
+        interactive=interactive,
         selected_panels=selected_panels,
+        num_grid_rows=num_grid_rows,
+        max_bar_length=max_bar_length,
+        scale=scale,
+
+        # Version
         version=version,
     )
-
+    
     manager.ui_loop(prompt)
 
 
@@ -238,27 +256,37 @@ def main():
         exit(0)
 
     MAV(
-        model=args.model,
-        prompt=args.prompt,
-        max_new_tokens=args.max_new_tokens,
-        aggregation=args.aggregation,
-        refresh_rate=args.refresh_rate,
-        interactive=args.interactive,
-        device=args.device,
-        scale=args.scale,
-        limit_chars=args.limit_chars,
-        temp=args.temp,
-        top_k=args.top_k,
-        top_p=args.top_p,
-        min_p=args.min_p,
-        repetition_penalty=args.repetition_penalty,
-        backend=args.backend,
-        seed=args.seed,
-        selected_panels=args.selected_panels,
-        num_grid_rows=args.num_grid_rows,
-        max_bar_length=args.max_bar_length,
-        version=version,
-    )
+    model=args.model,
+    prompt=args.prompt,
+
+    # Token & Output Control
+    max_new_tokens=args.max_new_tokens,
+    limit_chars=args.limit_chars,
+
+    # Decoding & Sampling Parameters
+    temp=args.temp,
+    top_k=args.top_k,
+    top_p=args.top_p,
+    min_p=args.min_p,
+    repetition_penalty=args.repetition_penalty,
+
+    # Aggregation & Display Settings
+    aggregation=args.aggregation,
+    refresh_rate=args.refresh_rate,
+    interactive=args.interactive,
+    selected_panels=args.selected_panels,
+    num_grid_rows=args.num_grid_rows,
+    max_bar_length=args.max_bar_length,
+    scale=args.scale,
+    
+    # Execution & Backend Settings
+    device=args.device,
+    backend=args.backend,
+    seed=args.seed,
+
+    # Version
+    version=version,
+)
 
 
 if __name__ == "__main__":
