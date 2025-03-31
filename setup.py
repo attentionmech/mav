@@ -6,7 +6,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="openmav",
-    version="0.0.10",
+    version="0.0.11",
     packages=find_packages(),  # Automatically find packages inside the repo
     install_requires=[
         "rich",
