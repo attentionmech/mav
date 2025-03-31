@@ -224,12 +224,12 @@ def main():
         default=[
             "generated_text",
             "top_predictions",
-            # "output_distribution", # TODO fix this panel
+            "output_distribution",
             "mlp_activations",
             "attention_entropy",
         ],
         help="List of selected panels. Default: top_predictions, "
-        "generated_text, mlp_activations, attention_entropy.",
+        "generated_text, mlp_activations, attention_entropy, output_distribution.",
     )
 
     parser.add_argument(

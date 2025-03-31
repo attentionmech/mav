@@ -68,7 +68,10 @@ class AttentionEntropyPanel(PanelBase):
     def get_panel_content(self):
         entropy_str = ""
         for i, (entropy_val, entropy_norm) in enumerate(
-            zip(self.measurements.attention_entropy_values, self.measurements.attention_entropy_values_normalized)
+            zip(
+                self.measurements.attention_entropy_values,
+                self.measurements.attention_entropy_values_normalized,
+            )
         ):
             entropy_val = float(entropy_val)
             entropy_norm = int(abs(float(entropy_norm)))
@@ -78,7 +81,13 @@ class AttentionEntropyPanel(PanelBase):
 
 
 class OutputDistributionPanel(PanelBase):
-    def __init__(self, measurements: ModelMeasurements, max_bar_length=20, num_bins=20):
+    def __init__(
+        self,
+        measurements: ModelMeasurements,
+        max_bar_length=20,
+        limit_chars=50,
+        num_bins=20,
+    ):
         super().__init__(
             "Output Distribution", "yellow", max_bar_length, limit_chars=None
         )

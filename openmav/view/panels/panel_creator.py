@@ -31,7 +31,9 @@ class PanelCreator:
         self.limit_chars = limit_chars
         self.num_bins = num_bins
         self.selected_panels = selected_panels
-        self.external_panels = external_panels or []  # Ensure external_panels is never None
+        self.external_panels = (
+            external_panels or []
+        )  # Ensure external_panels is never None
 
     def get_panels(self, measurements: ModelMeasurements):
         # Get internal panel classes (still removing "Panel" suffix)
@@ -46,7 +48,7 @@ class PanelCreator:
         if self.external_panels:
             for panel in self.external_panels:
                 if isinstance(panel, type) and issubclass(panel, PanelBase):
-                    #don't want to make any effort on external panel naming convention..
+                    # don't want to make any effort on external panel naming convention..
                     panel_name = panel.__name__
                     external_panel_classes[panel_name] = panel
                 elif isinstance(panel, PanelBase):
@@ -58,7 +60,9 @@ class PanelCreator:
 
         panel_definitions = {
             name: panel_cls(
-                measurements, self.max_bar_length, self.limit_chars
+                measurements,
+                max_bar_length=self.max_bar_length,
+                limit_chars=self.limit_chars,
             ).get_panel()
             for name, panel_cls in all_panel_classes.items()
         }
