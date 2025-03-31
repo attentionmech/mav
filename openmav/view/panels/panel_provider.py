@@ -43,7 +43,7 @@ class PanelProvider:
 
         entries = [
             f"[bold magenta]{token:<10}[/] "
-            f"([bold yellow]{prob:>5.1%}[/bold yellow], [bold cyan]{logit:>4.1f}[/bold cyan])\n"
+            f"([bold yellow]{prob:>5.1%}[/bold yellow], [bold cyan]{logit:>4.1f}[/bold cyan])"
             for token, prob, logit in zip(
                 decoded_tokens, top_probs.tolist(), logits[0, -1, top_ids].tolist()
             )
@@ -89,8 +89,10 @@ class PanelProvider:
         ]
 
         bin_output = "\n".join(
-            f"[bold yellow]{label}[/]: [bold cyan]{bar}[/]"
-            for label, bar, s in zip(bin_labels, bar_chars, bin_sums)
+            [
+                f"[bold yellow]{label}[/]: [bold cyan]{bar}[/]"
+                for label, bar, s in zip(bin_labels, bar_chars, bin_sums)
+            ][::-1]
         )
 
         return bin_output

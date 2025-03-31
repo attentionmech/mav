@@ -13,7 +13,6 @@ warnings.filterwarnings("ignore")
 def MAV(
     model: str,
     prompt: str,
-    
     # Token & Output Control
     max_new_tokens: int = 200,
     limit_chars: int = 250,
@@ -66,7 +65,6 @@ def MAV(
         scale=scale,
         max_bar_length=max_bar_length,
     )
-    
 
     manager = ConsoleMAV(
         # Data & Model
@@ -153,7 +151,7 @@ def main():
     parser.add_argument(
         "--limit-chars",
         type=int,
-        default=250,
+        default=400,
         help="Limit the number of tokens for visualization.",
     )
 
@@ -211,7 +209,7 @@ def main():
     parser.add_argument(
         "--max-bar-length",
         type=int,
-        default=50,
+        default=35,
         help="UI bar max length counted in square characters",
     )
 
