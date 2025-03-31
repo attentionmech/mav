@@ -9,6 +9,8 @@ from openmav.view.console_view import ConsoleMAV
 
 warnings.filterwarnings("ignore")
 
+#app version
+version = "0.0.9"
 
 def MAV(
     model: str,
@@ -37,7 +39,7 @@ def MAV(
     model_obj=None,  # Pass model object compatible with backend
     tokenizer_obj=None,  # Pass tokenizer object compatible with backend
     # Version
-    version=None,
+    
 ):
     if model is None:
         print("model name cannot be empty.")
@@ -121,7 +123,7 @@ def main():
     parser.add_argument(
         "--refresh-rate",
         type=float,
-        default=0.1,
+        default=0.2,
         help="Refresh rate for visualization",
     )
 
@@ -238,7 +240,6 @@ def main():
 
     args = parser.parse_args()
 
-    version = "0.0.9"
 
     if args.version:
         print(version)
@@ -268,8 +269,6 @@ def main():
         device=args.device,
         backend=args.backend,
         seed=args.seed,
-        # Version
-        version=version,
     )
 
 
