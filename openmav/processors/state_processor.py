@@ -75,8 +75,8 @@ class StateProcessor:
         return ModelMeasurements(
             mlp_activations=data_dict["mlp_activations"],
             mlp_normalized=data_dict["mlp_normalized"],
-            entropy_values=data_dict["entropy_values"],
-            entropy_normalized=data_dict["entropy_normalized"],
+            attention_entropy_values=data_dict["entropy_values"],
+            attention_entropy_values_normalized=data_dict["entropy_normalized"],
             generated_text=data_dict["generated_text"],
             predicted_char=data_dict["predicted_char"],
             next_token_probs=data_dict["next_token_probs"],

@@ -12,8 +12,8 @@ import torch
 class ModelMeasurements:
     mlp_activations: torch.Tensor
     mlp_normalized: torch.Tensor
-    entropy_values: torch.Tensor
-    entropy_normalized: torch.Tensor
+    attention_entropy_values: torch.Tensor
+    attention_entropy_values_normalized: torch.Tensor
     generated_text: str
     predicted_char: str
     next_token_probs: torch.Tensor

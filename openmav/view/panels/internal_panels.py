@@ -68,7 +68,7 @@ class AttentionEntropyPanel(PanelBase):
     def get_panel_content(self):
         entropy_str = ""
         for i, (entropy_val, entropy_norm) in enumerate(
-            zip(self.measurements.entropy_values, self.measurements.entropy_normalized)
+            zip(self.measurements.attention_entropy_values, self.measurements.attention_entropy_values_normalized)
         ):
             entropy_val = float(entropy_val)
             entropy_norm = int(abs(float(entropy_norm)))
