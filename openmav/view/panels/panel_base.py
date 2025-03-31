@@ -5,7 +5,11 @@ from rich.panel import Panel
 
 class PanelBase(ABC):
     def __init__(
-        self, title: str, border_style: str, max_bar_length: int, limit_chars: int
+        self,
+        title: str = "",
+        border_style: str = "",
+        max_bar_length: int = 20,
+        limit_chars: int = 50,
     ):
         self.title = title
         self.border_style = border_style

@@ -8,9 +8,17 @@ from openmav.view.panels.panel_base import PanelBase
 
 class TopPredictionsPanel(PanelBase):
     def __init__(
-        self, measurements: ModelMeasurements, max_bar_length=20, limit_chars=50
+        self,
+        measurements: ModelMeasurements,
+        max_bar_length: int = 20,
+        limit_chars: int = 50,
     ):
-        super().__init__("Top Predictions", "blue", max_bar_length, limit_chars)
+        super().__init__(
+            title="Top Predictions",
+            border_style="blue",
+            max_bar_length=max_bar_length,
+            limit_chars=limit_chars,
+        )
         self.measurements = measurements
 
     def get_panel_content(self):
@@ -28,9 +36,17 @@ class TopPredictionsPanel(PanelBase):
 
 class MlpActivationsPanel(PanelBase):
     def __init__(
-        self, measurements: ModelMeasurements, max_bar_length=20, limit_chars=50
+        self,
+        measurements: ModelMeasurements,
+        max_bar_length: int = 20,
+        limit_chars: int = 50,
     ):
-        super().__init__("MLP Activations", "cyan", max_bar_length, limit_chars)
+        super().__init__(
+            title="MLP Activations",
+            border_style="cyan",
+            max_bar_length=max_bar_length,
+            limit_chars=limit_chars,
+        )
         self.measurements = measurements
 
     def get_panel_content(self):
@@ -60,9 +76,17 @@ class MlpActivationsPanel(PanelBase):
 
 class AttentionEntropyPanel(PanelBase):
     def __init__(
-        self, measurements: ModelMeasurements, max_bar_length=20, limit_chars=50
+        self,
+        measurements: ModelMeasurements,
+        max_bar_length: int = 20,
+        limit_chars: int = 50,
     ):
-        super().__init__("Attention Entropy", "magenta", max_bar_length, limit_chars)
+        super().__init__(
+            title="Attention Entropy",
+            border_style="magenta",
+            max_bar_length=max_bar_length,
+            limit_chars=limit_chars,
+        )
         self.measurements = measurements
 
     def get_panel_content(self):
@@ -84,12 +108,15 @@ class OutputDistributionPanel(PanelBase):
     def __init__(
         self,
         measurements: ModelMeasurements,
-        max_bar_length=20,
-        limit_chars=50,
-        num_bins=20,
+        max_bar_length: int = 20,
+        limit_chars: int = 50,
+        num_bins: int = 20,
     ):
         super().__init__(
-            "Output Distribution", "yellow", max_bar_length, limit_chars=None
+            title="Output Distribution",
+            border_style="yellow",
+            max_bar_length=max_bar_length,
+            limit_chars=None,
         )
         self.measurements = measurements
         self.num_bins = num_bins
@@ -123,9 +150,17 @@ class OutputDistributionPanel(PanelBase):
 
 class GeneratedTextPanel(PanelBase):
     def __init__(
-        self, measurements: ModelMeasurements, max_bar_length=20, limit_chars=50
+        self,
+        measurements: ModelMeasurements,
+        max_bar_length: int = 20,
+        limit_chars: int = 50,
     ):
-        super().__init__("Generated Text", "green", max_bar_length, limit_chars)
+        super().__init__(
+            title="Generated Text",
+            border_style="green",
+            max_bar_length=max_bar_length,
+            limit_chars=limit_chars,
+        )
         self.measurements = measurements
 
     def get_panel_content(self):
