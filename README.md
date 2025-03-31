@@ -36,6 +36,7 @@ or
 ```sh
 uv run --with git+https://github.com/attentionmech/mav mav --model gpt2 --prompt "hello mello"
 ```  
+<hr>
 
 #### METHOD 2: Without `uv`:
 
@@ -60,6 +61,7 @@ uv run --with git+https://github.com/attentionmech/mav mav --model gpt2 --prompt
 
    MAV("gpt2", "Hello")
    ```
+<hr>
 
 #### METHOD 3: Locally from scratch
 
@@ -75,6 +77,7 @@ uv run --with git+https://github.com/attentionmech/mav mav --model gpt2 --prompt
    mav --model gpt2 --prompt "hello mello"
    ```
 
+<hr>
 
 #### METHOD 4: Inside Jupyter notebook/Colab
 
@@ -89,6 +92,8 @@ You can replace `gpt2` with other Hugging Face models for example:
 - `gpt2-medium`
 - `gpt2-large`
 
+
+<hr>
 
 ## Tutorials
 
