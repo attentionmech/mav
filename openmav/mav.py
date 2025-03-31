@@ -238,7 +238,7 @@ def main():
 
     args = parser.parse_args()
 
-    version = "0.0.8"
+    version = "0.0.9"
 
     if args.version:
         print(version)
