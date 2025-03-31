@@ -4,13 +4,14 @@ import argparse
 import warnings
 
 from openmav.backends.model_backend_transformers import TransformersBackend
-from openmav.processors.data_fetcher import DataFetcher
+from openmav.processors.state_fetcher import StateFetcher
 from openmav.view.console_view import ConsoleManager
 
 warnings.filterwarnings("ignore")
 
-#app version
+# app version
 version = "0.0.9"
+
 
 def MAV(
     model: str,
@@ -39,7 +40,6 @@ def MAV(
     model_obj=None,  # Pass model object compatible with backend
     tokenizer_obj=None,  # Pass tokenizer object compatible with backend
     # Version
-    
 ):
     if model is None:
         print("model name cannot be empty.")
@@ -60,7 +60,7 @@ def MAV(
     else:
         raise ValueError(f"Unsupported backend: {backend}")
 
-    fetcher = DataFetcher(
+    fetcher = StateFetcher(
         backend,
         max_new_tokens=max_new_tokens,
         aggregation=aggregation,
@@ -239,7 +239,6 @@ def main():
     parser.add_argument("--version", action="store_true", help="version of MAV")
 
     args = parser.parse_args()
-
 
     if args.version:
         print(version)

@@ -2,6 +2,7 @@ import numpy as np
 from rich.text import Text
 
 
+# this should majorly go to plugins system
 class PanelProvider:
 
     def __init__(self, max_bar_length, limit_chars):

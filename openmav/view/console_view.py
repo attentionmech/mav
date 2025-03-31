@@ -66,7 +66,7 @@ class ConsoleManager:
         self.live.start()
 
         try:
-            for data in self.data_provider.generate_tokens(
+            for data in self.data_provider.fetch_next(
                 prompt,
                 temperature=self.temperature,
                 top_k=self.top_k,

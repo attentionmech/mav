@@ -1,10 +1,11 @@
 import torch
 
-from openmav.processors.data_processor import DataProcessor
+from openmav.processors.state_processor import StateProcessor
+
+# TOOD: move params to config
 
 
-
-class DataFetcher:
+class StateFetcher:
     """
     Handles token generation and data processing.
     """
@@ -17,13 +18,13 @@ class DataFetcher:
         scale="linear",
         max_bar_length=20,
     ):
-        self.backend = backend
         self.max_new_tokens = max_new_tokens
-        self.data_processor = DataProcessor(
+        self.state_processor = StateProcessor(
             backend, aggregation=aggregation, scale=scale, max_bar_length=max_bar_length
         )
+        self.backend = backend
 
-    def generate_tokens(
+    def fetch_next(
         self,
         prompt,
         temperature=1.0,
@@ -56,7 +57,7 @@ class DataFetcher:
             next_token_id = torch.multinomial(next_token_probs, num_samples=1).item()
             generated_ids.append(next_token_id)
 
-            data = self.data_processor.process_data(
+            measurement_data = self.state_processor.next(
                 generated_ids,
                 next_token_id,
                 hidden_states,
@@ -68,4 +69,4 @@ class DataFetcher:
                 self.backend,
             )
 
-            yield data  # Yield processed data for visualization
+            yield measurement_data  # Yield processed data for visualization
