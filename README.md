@@ -22,7 +22,7 @@ MAV - Model Activations Visualiser
 
 ## Getting started  
 
-#### If `uv` is installed:  
+#### METHOD 1: If `uv` is installed:  
 
 ```sh
 uv run --with openmav mav
@@ -34,7 +34,7 @@ or
 uv run --with git+https://github.com/attentionmech/mav mav --model gpt2 --prompt "hello mello"
 ```  
 
-#### Without `uv`:
+#### METHOD 2: Without `uv`:
 
 1. Set up and activate a virtual environment  
 2. Install the package:  
@@ -58,7 +58,7 @@ uv run --with git+https://github.com/attentionmech/mav mav --model gpt2 --prompt
    MAV("gpt2", "Hello")
    ```
 
-#### Locally from scratch
+#### METHOD 3: Locally from scratch
 
 1. git clone https://github.com/attentionmech/mav  
 2. cd mav
@@ -73,7 +73,7 @@ uv run --with git+https://github.com/attentionmech/mav mav --model gpt2 --prompt
    ```
 
 
-#### Inside Jupyter notebook/Colab
+#### METHOD 4: Inside Jupyter notebook/Colab
 
 <a href="https://colab.research.google.com/gist/attentionmech/507312c98a6f49f420ec539c301dcb2d/openmav.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a>
 
