@@ -228,7 +228,7 @@ def main():
             "mlp_activations",
             "attention_entropy",
         ],
-        help="List of selected panels. Default: top_predictions, output_distribution, "
+        help="List of selected panels. Default: top_predictions, "
         "generated_text, mlp_activations, attention_entropy.",
     )
 
