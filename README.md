@@ -20,6 +20,9 @@
 
 MAV - Model Activations Visualiser
 
+![image](https://github.com/user-attachments/assets/ed0dee9d-fe31-43a4-8a4a-303631680bc3)
+
+
 ## Getting started  
 
 #### METHOD 1: If `uv` is installed:  
@@ -85,11 +88,6 @@ You can replace `gpt2` with other Hugging Face models for example:
 - `HuggingFaceTB/SmolLM-135M` 
 - `gpt2-medium`
 - `gpt2-large`
-
-
-## UI
-
-![image](https://github.com/user-attachments/assets/ed0dee9d-fe31-43a4-8a4a-303631680bc3)
 
 
 ## Tutorials
