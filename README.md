@@ -18,7 +18,7 @@
 
 # Introduction
 
-MAV
+MAV - Model Activations Visualiser
 
 ## Getting started  
 
@@ -73,6 +73,13 @@ uv run --with git+https://github.com/attentionmech/mav mav --model gpt2 --prompt
    ```
 
 
+#### Inside Jupyter notebook/Colab
+
+<a href="https://colab.research.google.com/gist/attentionmech/507312c98a6f49f420ec539c301dcb2d/openmav.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a>
+
+<br>
+
+
 You can replace `gpt2` with other Hugging Face models for example:  
 - `meta-llama/Llama-3.2-1B`  
 - `HuggingFaceTB/SmolLM-135M` 
@@ -86,10 +93,6 @@ You can replace `gpt2` with other Hugging Face models for example:
 
 
 ## Tutorials
-
-#### running MAV in google collab 
-
-![gist](https://gist.github.com/attentionmech/507312c98a6f49f420ec539c301dcb2d)
 
 #### running MAV with a training loop with a custom model (not pretrained one)
 
@@ -106,5 +109,6 @@ You can replace `gpt2` with other Hugging Face models for example:
 - [sample with temperature](https://x.com/attentionmech/status/1905886861245259857)
 - [running with custom model](https://x.com/attentionmech/status/1906172982294376755)
 - [panel selection](https://x.com/attentionmech/status/1906304032798339124)
+- [running in colab notebook](https://x.com/attentionmech/status/1906657159355789593)
 
 Note: explore it using the command line help as well, since many sampling params are exposed.
