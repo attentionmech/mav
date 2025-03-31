@@ -6,7 +6,6 @@ import warnings
 from openmav.backends.model_backend_transformers import TransformersBackend
 from openmav.processors.data_processor import MAVGenerator
 from openmav.view.console_view import ConsoleMAV
-from openmav.view.notebook_view import NotebookMAV
 
 warnings.filterwarnings("ignore")
 
@@ -25,7 +24,6 @@ def MAV(
     min_p: float = 0.0,
     repetition_penalty: float = 1.0,
     # Aggregation & Display Settings
-    notebook_mode=False,
     aggregation: str = "l2",
     refresh_rate: float = 0.1,
     interactive: bool = False,
@@ -70,7 +68,7 @@ def MAV(
     )
     
 
-    manager = (ConsoleMAV if not notebook_mode else NotebookMAV)(
+    manager = ConsoleMAV(
         # Data & Model
         data_provider=mav_generator,
         model_name=model,
@@ -237,13 +235,6 @@ def main():
         type=int,
         default=2,
     )
-    
-    parser.add_argument(
-        "--notebook-mode",
-        action="store_true",
-        help="Run in ipython/jupyter notebooks",
-    )
-    
 
     parser.add_argument("--version", action="store_true", help="version of MAV")
 
@@ -281,7 +272,6 @@ def main():
         seed=args.seed,
         # Version
         version=version,
-        notebook_mode=args.notebook_mode,
     )
 
 
