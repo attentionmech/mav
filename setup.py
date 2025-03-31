@@ -12,7 +12,6 @@ setup(
         "rich",
         "torch",
         "transformers",
-        "ipython"
     ],
     entry_points={
         "console_scripts": [
