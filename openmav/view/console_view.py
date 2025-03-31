@@ -7,6 +7,8 @@ from rich.live import Live
 from rich.panel import Panel
 from rich.text import Text
 
+from openmav.view.panels.panel_provider import PanelProvider
+
 
 class ConsoleMAV:
     """
@@ -88,12 +90,13 @@ class ConsoleMAV:
         Handles UI updates based on provided data.
         """
         layout = Layout()
+        panel_provider = PanelProvider(max_bar_length=self.max_bar_length)
 
         selected_panels = self.selected_panels
 
         panel_definitions = {
             "top_predictions": Panel(
-                self._create_top_predictions_panel_content(
+                panel_provider.create_top_predictions_panel_content(
                     data["decoded_tokens"],
                     data["top_ids"],
                     data["top_probs"],
@@ -103,28 +106,28 @@ class ConsoleMAV:
                 border_style="blue",
             ),
             "mlp_activations": Panel(
-                self._create_activations_panel_content(
+                panel_provider.create_activations_panel_content(
                     data["mlp_normalized"], data["mlp_activations"]
                 ),
                 title="MLP Activations",
                 border_style="cyan",
             ),
             "attention_entropy": Panel(
-                self._create_entropy_panel_content(
+                panel_provider.create_entropy_panel_content(
                     data["entropy_values"], data["entropy_normalized"]
                 ),
                 title="Attention Entropy",
                 border_style="magenta",
             ),
             "output_distribution": Panel(
-                self._create_prob_bin_panel(data["next_token_probs"]),
+                panel_provider.create_prob_bin_panel(data["next_token_probs"]),
                 title="Output Distribution",
                 border_style="yellow",
             ),
             "generated_text": Panel(
-                Text(
-                    data["generated_text"][-self.limit_chars :], style="bold bright_red"
-                ).append(data["predicted_char"], style="bold on green"),
+                panel_provider.create_generated_text_panel(
+                    data["generated_text"], data["predicted_char"], self.limit_chars
+                ),
                 title="Generated text",
                 border_style="green",
             ),
@@ -163,85 +166,3 @@ class ConsoleMAV:
                 rows[i].split_row(*[Layout(panel) for panel in row_panels])
 
         self.live.update(layout, refresh=True)
-
-    def _create_activations_panel_content(self, mlp_normalized, mlp_activations):
-        activations_str = ""
-        for i, (mlp_act, raw_mlp) in enumerate(zip(mlp_normalized, mlp_activations)):
-            mlp_act_scalar = (
-                mlp_act.item() if isinstance(mlp_act, np.ndarray) else mlp_act
-            )
-            raw_mlp_scalar = (
-                raw_mlp.item() if isinstance(raw_mlp, np.ndarray) else raw_mlp
-            )
-            mlp_bar = "█" * int(abs(mlp_act_scalar))
-            mlp_color = "yellow" if raw_mlp_scalar >= 0 else "magenta"
-
-            activations_str += (
-                f"[bold white]Layer {i:2d}[/] | "
-                f"[bold yellow]:[/] [{mlp_color}]{mlp_bar.ljust(self.max_bar_length)}[/] [bold yellow]{raw_mlp_scalar:+.1f}[/]\n"
-            )
-        return activations_str
-
-    def _create_entropy_panel_content(self, entropy_values, entropy_normalized):
-        entropy_str = ""
-        for i, (entropy_val, entropy_norm) in enumerate(
-            zip(entropy_values, entropy_normalized)
-        ):
-            entropy_val = float(entropy_val)
-            entropy_norm = int(abs(float(entropy_norm)))
-            entropy_bar = "█" * entropy_norm
-            entropy_str += f"[bold white]Layer {i + 1:2d}[/] | [bold yellow]:[/] [{entropy_bar.ljust(self.max_bar_length)}] {entropy_val:.1f}\n"
-        return entropy_str
-
-    def _create_top_predictions_panel_content(
-        self, decoded_tokens, top_ids, top_probs, logits
-    ):
-
-        entries = [
-            f"[bold magenta]{token:<10}[/] "
-            f"([bold yellow]{prob:>5.1%}[/bold yellow], [bold cyan]{logit:>4.1f}[/bold cyan])\n"
-            for token, prob, logit in zip(
-                decoded_tokens, top_probs.tolist(), logits[0, -1, top_ids].tolist()
-            )
-        ]
-
-        return "\n".join(entries)
-
-    def _create_prob_bin_panel(self, next_token_probs, num_bins=20):
-        """
-        Create a histogram-like panel for token probabilities after sorting.
-
-        Args:
-            next_token_probs (torch.Tensor): Probabilities of the next token.
-            num_bins (int): Number of bins to divide the sorted probabilities.
-
-        Returns:
-            str: Formatted string representing probability bins.
-        """
-        next_token_probs = next_token_probs.cpu().numpy()
-
-        sorted_probs = np.sort(next_token_probs)
-
-        sorted_probs = sorted_probs[
-            -100:
-        ]  # TODO: find better way to organise params for this project
-
-        bin_edges = np.linspace(0, len(sorted_probs), num_bins + 1, dtype=int)
-        bin_sums = [
-            np.sum(sorted_probs[bin_edges[i] : bin_edges[i + 1]])
-            for i in range(num_bins)
-        ]
-
-        max_sum = max(bin_sums) if max(bin_sums) > 0 else 1
-        bar_chars = ["█" * int((s / max_sum) * self.max_bar_length) for s in bin_sums]
-
-        bin_labels = [
-            f"{sorted_probs[bin_edges[i + 1] - 1]:.4f}" for i in range(num_bins)
-        ]
-
-        bin_output = "\n".join(
-            f"[bold yellow]{label}[/]: [bold cyan]{bar}[/]"
-            for label, bar, s in zip(bin_labels, bar_chars, bin_sums)
-        )
-
-        return bin_output
