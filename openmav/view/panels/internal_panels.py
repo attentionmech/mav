@@ -26,7 +26,7 @@ class TopPredictionsPanel(PanelBase):
         return "\n".join(entries)
 
 
-class MLPActivationsPanel(PanelBase):
+class MlpActivationsPanel(PanelBase):
     def __init__(
         self, measurements: ModelMeasurements, max_bar_length=20, limit_chars=50
     ):

@@ -2,7 +2,6 @@ from abc import ABC, abstractmethod
 
 from rich.panel import Panel
 
-
 class PanelBase(ABC):
     def __init__(
         self, title: str, border_style: str, max_bar_length: int, limit_chars: int

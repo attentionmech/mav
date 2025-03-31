@@ -5,12 +5,12 @@ import warnings
 
 from openmav.backends.model_backend_transformers import TransformersBackend
 from openmav.processors.state_fetcher import StateFetcher
-from openmav.view.console_view import ConsoleManager
+from openmav.view.main_loop_manager import MainLoopManager
 
 warnings.filterwarnings("ignore")
 
 # app version
-version = "0.0.9"
+APP_VERSION = "0.0.9"
 
 
 def MAV(
@@ -37,9 +37,12 @@ def MAV(
     scale: str = "linear",
     backend: str = "transformers",
     seed: int = 42,
+    
+    # advanced 
     model_obj=None,  # Pass model object compatible with backend
     tokenizer_obj=None,  # Pass tokenizer object compatible with backend
-    # Version
+    
+    external_panels=None, # a none empty list of classes 
 ):
     if model is None:
         print("model name cannot be empty.")
@@ -60,7 +63,7 @@ def MAV(
     else:
         raise ValueError(f"Unsupported backend: {backend}")
 
-    fetcher = StateFetcher(
+    state_fetcher = StateFetcher(
         backend,
         max_new_tokens=max_new_tokens,
         aggregation=aggregation,
@@ -68,9 +71,9 @@ def MAV(
         max_bar_length=max_bar_length,
     )
 
-    manager = ConsoleManager(
+    manager = MainLoopManager(
         # Data & Model
-        data_provider=fetcher,
+        state_provider=state_fetcher,
         model_name=model,
         # Token & Output Control
         max_new_tokens=max_new_tokens,
@@ -90,10 +93,12 @@ def MAV(
         max_bar_length=max_bar_length,
         scale=scale,
         # Version
-        version=version,
+        version=APP_VERSION,
+        
+        external_panels=external_panels
     )
 
-    manager.ui_loop(prompt)
+    manager.state_loop(prompt)
 
 
 def main():
@@ -241,7 +246,7 @@ def main():
     args = parser.parse_args()
 
     if args.version:
-        print(version)
+        print(APP_VERSION)
         exit(0)
 
     MAV(
