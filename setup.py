@@ -11,7 +11,8 @@ setup(
     install_requires=[
         "rich",
         "torch",
-        "transformers"
+        "transformers",
+        "ipython"
     ],
     entry_points={
         "console_scripts": [
