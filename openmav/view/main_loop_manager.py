@@ -57,7 +57,10 @@ class MainLoopManager:
         self.version = version
         self.model_name = model_name
         self.panel_creator = PanelCreator(
-            max_bar_length=max_bar_length, limit_chars=limit_chars, selected_panels=selected_panels, external_panels=external_panels
+            max_bar_length=max_bar_length,
+            limit_chars=limit_chars,
+            selected_panels=selected_panels,
+            external_panels=external_panels,
         )
 
     def state_loop(self, prompt):
@@ -95,7 +98,6 @@ class MainLoopManager:
         Handles UI updates based on provided data.
         """
         layout = Layout()
-
 
         panels = self.panel_creator.get_panels(data)
 

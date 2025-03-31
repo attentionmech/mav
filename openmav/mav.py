@@ -37,12 +37,10 @@ def MAV(
     scale: str = "linear",
     backend: str = "transformers",
     seed: int = 42,
-    
-    # advanced 
+    # advanced
     model_obj=None,  # Pass model object compatible with backend
     tokenizer_obj=None,  # Pass tokenizer object compatible with backend
-    
-    external_panels=None, # a none empty list of classes 
+    external_panels=None,  # a none empty list of classes
 ):
     if model is None:
         print("model name cannot be empty.")
@@ -94,8 +92,7 @@ def MAV(
         scale=scale,
         # Version
         version=APP_VERSION,
-        
-        external_panels=external_panels
+        external_panels=external_panels,
     )
 
     manager.state_loop(prompt)
