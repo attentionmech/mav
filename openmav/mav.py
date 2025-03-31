@@ -224,7 +224,7 @@ def main():
         default=[
             "generated_text",
             "top_predictions",
-            "output_distribution",
+            # "output_distribution", # TODO fix this panel
             "mlp_activations",
             "attention_entropy",
         ],
