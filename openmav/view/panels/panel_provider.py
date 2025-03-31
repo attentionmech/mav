@@ -4,8 +4,9 @@ from rich.text import Text
 
 class PanelProvider:
 
-    def __init__(self, max_bar_length):
+    def __init__(self, max_bar_length, limit_chars):
         self.max_bar_length = max_bar_length
+        self.limit_chars = limit_chars
 
     def create_activations_panel_content(self, mlp_normalized, mlp_activations):
         activations_str = ""
@@ -50,10 +51,10 @@ class PanelProvider:
 
         return "\n".join(entries)
 
-    def create_generated_text_panel(self, generated_text, predicted_char, limit_chars):
-        return Text(generated_text[-limit_chars:], style="bold bright_red").append(
-            predicted_char, style="bold on green"
-        )
+    def create_generated_text_panel(self, generated_text, predicted_char):
+        return Text(
+            generated_text[-self.limit_chars :], style="bold bright_red"
+        ).append(predicted_char, style="bold on green")
 
     def create_prob_bin_panel(self, next_token_probs, num_bins=20):
         """

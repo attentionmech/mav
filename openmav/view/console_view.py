@@ -7,7 +7,7 @@ from rich.live import Live
 from rich.panel import Panel
 from rich.text import Text
 
-from openmav.view.panels.panel_provider import PanelProvider
+from openmav.view.panels.panel_creator import PanelCreator
 
 
 class ConsoleMAV:
@@ -54,6 +54,9 @@ class ConsoleMAV:
         self.selected_panels = selected_panels
         self.version = version
         self.model_name = model_name
+        self.panel_creator = PanelCreator(
+            max_bar_length=max_bar_length, limit_chars=limit_chars
+        )
 
     def ui_loop(self, prompt):
         """
@@ -90,48 +93,10 @@ class ConsoleMAV:
         Handles UI updates based on provided data.
         """
         layout = Layout()
-        panel_provider = PanelProvider(max_bar_length=self.max_bar_length)
 
         selected_panels = self.selected_panels
 
-        panel_definitions = {
-            "top_predictions": Panel(
-                panel_provider.create_top_predictions_panel_content(
-                    data["decoded_tokens"],
-                    data["top_ids"],
-                    data["top_probs"],
-                    data["logits"],
-                ),
-                title="Top Predictions",
-                border_style="blue",
-            ),
-            "mlp_activations": Panel(
-                panel_provider.create_activations_panel_content(
-                    data["mlp_normalized"], data["mlp_activations"]
-                ),
-                title="MLP Activations",
-                border_style="cyan",
-            ),
-            "attention_entropy": Panel(
-                panel_provider.create_entropy_panel_content(
-                    data["entropy_values"], data["entropy_normalized"]
-                ),
-                title="Attention Entropy",
-                border_style="magenta",
-            ),
-            "output_distribution": Panel(
-                panel_provider.create_prob_bin_panel(data["next_token_probs"]),
-                title="Output Distribution",
-                border_style="yellow",
-            ),
-            "generated_text": Panel(
-                panel_provider.create_generated_text_panel(
-                    data["generated_text"], data["predicted_char"], self.limit_chars
-                ),
-                title="Generated text",
-                border_style="green",
-            ),
-        }
+        panel_definitions = self.panel_creator.get_panels(data)
 
         if selected_panels is None:
             selected_panels = list(panel_definitions.keys())
