@@ -1,6 +1,7 @@
 import time
 
 import numpy as np
+from rich.align import Align
 from rich.console import Console
 from rich.layout import Layout
 from rich.live import Live
@@ -118,7 +119,8 @@ class ConsoleManager:
 
         title_bar = Layout(
             Panel(
-                f"| OpenMAV v{self.version} | {self.model_name}", border_style="white"
+                Align.center(f"| OpenMAV v{self.version} | model: {self.model_name}"),
+                border_style="white",
             ),
             size=3,
         )
