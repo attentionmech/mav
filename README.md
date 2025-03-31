@@ -85,7 +85,11 @@ You can replace `gpt2` with other Hugging Face models for example:
 ![image](https://github.com/user-attachments/assets/ed0dee9d-fe31-43a4-8a4a-303631680bc3)
 
 
-## Examples
+## Tutorials
+
+#### running MAV in google collab 
+
+![gist](https://gist.github.com/attentionmech/507312c98a6f49f420ec539c301dcb2d)
 
 #### running MAV with a training loop with a custom model (not pretrained one)
 
