@@ -10,7 +10,7 @@ from openmav.view.main_loop_manager import MainLoopManager
 warnings.filterwarnings("ignore")
 
 # app version
-APP_VERSION = "0.0.9"
+APP_VERSION = "0.0.10"
 
 
 def MAV(
