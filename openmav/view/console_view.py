@@ -10,7 +10,7 @@ from rich.text import Text
 from openmav.view.panels.panel_creator import PanelCreator
 
 
-class ConsoleMAV:
+class ConsoleManager:
     """
     Handles UI loop
     """
