@@ -18,9 +18,9 @@
 
 # Introduction
 
-MAV - Model Activity Visualiser
+MAV - Model Activity Visualiser (for LLMs)
 
-![image](https://github.com/user-attachments/assets/ed0dee9d-fe31-43a4-8a4a-303631680bc3)
+![test (1)](https://github.com/user-attachments/assets/8bca6807-325f-4863-ab1a-fe25bd7f4c46)
 
 
 ## Getting started  
