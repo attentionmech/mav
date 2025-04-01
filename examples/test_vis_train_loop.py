@@ -11,17 +11,14 @@
 # run this using: uv run examples/vis_train_loop.py
 
 import os
+import sys
+
 import torch
-from transformers import (
-    GPT2Config,
-    GPT2LMHeadModel,
-    GPT2Tokenizer,
-    Trainer,
-    TrainingArguments,
-    DataCollatorForLanguageModeling,
-    TrainerCallback,
-)
 from datasets import load_dataset
+from transformers import (DataCollatorForLanguageModeling, GPT2Config,
+                          GPT2LMHeadModel, GPT2Tokenizer, Trainer,
+                          TrainerCallback, TrainingArguments)
+
 from openmav.mav import MAV
 
 DEVICE = (
@@ -33,9 +30,9 @@ DEVICE = (
 config = GPT2Config(
     vocab_size=50257,
     n_positions=1024,
-    n_embd=256,
-    n_layer=2,
-    n_head=2,
+    n_embd=8,
+    n_layer=1,
+    n_head=1,
     attn_implementation="eager",
 )
 
@@ -62,7 +59,7 @@ training_args = TrainingArguments(
     output_dir="/tmp/temp_output",
     # output_dir="nul",  # Windows (uncomment if using Windows)
     overwrite_output_dir=False,
-    num_train_epochs=3,
+    num_train_epochs=1,
     per_device_train_batch_size=8,
     save_strategy="no",  # Disables checkpointing
     logging_dir=None,  # Prevents logging to disk
@@ -89,12 +86,13 @@ class InferenceCallback(TrainerCallback):
                 "Once upon a time",
                 model_obj=self.model,
                 tokenizer_obj=self.tokenizer,
-                max_new_tokens=20,
-                refresh_rate=0.1,
+                max_new_tokens=5,
+                refresh_rate=0.0,
                 num_grid_rows=2,
                 device=DEVICE,
             )
         self.model.train()
+        sys.exit(0)  # we just wanna test fast
 
 
 trainer = Trainer(
