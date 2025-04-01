@@ -116,7 +116,6 @@ You can replace `gpt2` with other Hugging Face models for example:
 ## Demos
 
 - [Basic plugins](https://x.com/attentionmech/status/1906769030540824963)
-- [Entropy Fire plugin](https://x.com/attentionmech/status/1906775229214663092)
 - [interactive mode](https://x.com/attentionmech/status/1905732784314081511)
 - [limit chars](https://x.com/attentionmech/status/1905760510445850709)
 - [sample with temperature](https://x.com/attentionmech/status/1905886861245259857)
