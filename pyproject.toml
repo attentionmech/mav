@@ -1,6 +1,6 @@
 [project]
 name = "openmav"
-version = "0.0.12"
+version = "0.0.13-rc"
 description = "MAV: Model Activity Visualizer"
 readme = "README.md"
 authors = [
