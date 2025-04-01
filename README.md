@@ -121,3 +121,18 @@ You can replace `gpt2` with other Hugging Face models for example:
 - [running in colab notebook](https://x.com/attentionmech/status/1906657159355789593)
 
 Note: explore it using the command line help as well, since many sampling params are exposed.
+
+## Contributing
+
+Clone the repository and install the package in development mode:
+
+```sh
+git clone https://github.com/attentionmech/mav
+cd mav
+
+# recommended
+uv sync
+
+# if you don't use uv
+pip install -e .
+```
