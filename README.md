@@ -95,6 +95,10 @@ You can replace `gpt2` with other Hugging Face models for example:
 
 <hr>
 
+## Documentation
+
+[documentation.md](documentation.md)
+
 ## Tutorials
 
 #### Writing your custom plugin tutorial in colab
