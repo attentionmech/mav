@@ -115,6 +115,9 @@ class EntropyFire(PanelBase):
 MAV("gpt2", "hello world", selected_panels=["generated_text", "EntropyFire"], external_panels=[EntropyFire])
 ```
 
+check [measurements.py](https://github.com/attentionmech/mav/blob/main/openmav/api/measurements.py) for metrices available
+
+
 ## 6. Command-Line Usage
 
 Run:
