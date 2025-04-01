@@ -18,7 +18,7 @@
 
 # Introduction
 
-MAV - Model Activations Visualiser
+MAV - Model Activity Visualiser
 
 ![image](https://github.com/user-attachments/assets/ed0dee9d-fe31-43a4-8a4a-303631680bc3)
 
