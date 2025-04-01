@@ -1,7 +1,7 @@
 [project]
 name = "openmav"
 version = "0.0.12-rc"
-description = "MAV: Model Activations Visualizer"
+description = "MAV: Model Activity Visualizer"
 readme = "README.md"
 authors = [
     { name = "attentionmech", email = "attentionmech@gmail.com" },
