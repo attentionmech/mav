@@ -1,0 +1,28 @@
+[project]
+name = "openmav"
+version = "0.0.9"
+description = "MAV: Model Activations Visualizer"
+readme = "README.md"
+authors = [
+    { name = "attentionmech", email = "attentionmech@gmail.com" },
+]
+requires-python = ">=3.6"
+dependencies = [
+    "rich>=10.11.0",
+    "torch>=1.5.1",
+    "transformers>=4.18.0",
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+]
+
+[project.urls]
+Homepage = "https://github.com/attentionmech/mav"
+
+[project.scripts]
+mav = "openmav.mav:main"
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
