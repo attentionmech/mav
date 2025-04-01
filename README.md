@@ -103,7 +103,7 @@ You can replace `gpt2` with other Hugging Face models for example:
 
 #### running MAV with a training loop with a custom model (not pretrained one)
 
-`uv run examples/vis_train_loop.py`
+`uv run examples/test_vis_train_loop.py`
 
 #### running MAV with custom panel selection and arrangement
 
