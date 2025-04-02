@@ -126,20 +126,95 @@ Run:
 mav --help
 ```
 
-Options include:
+## Command-Line Flags
 
-- `--model`
-- `--prompt`
-- `--max-new-tokens`
-- `--aggregation`
-- `--refresh-rate`
-- `--interactive`
-- `--device`
-- `--selected-panels`
-- `--num-grid-rows`
-- more...
+The Model Activation Visualizer (MAV) can be configured using the following command-line flags:
 
+| Flag                   | Type    | Default              | Description                                                                                                                                |
+| ---------------------- | ------- | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| `--model`              | `str`   | `"gpt2"`             | Hugging Face model name.  Specifies the model to use for text generation (e.g., `gpt2`, `bert-base-uncased`).                               |
+| `--prompt`             | `str`   | `"Once upon a timeline "` | Initial prompt for text generation. The model starts generating text from this prompt.                                                     |
+| `--max-new-tokens`     | `int`   | `200`                | Number of tokens to generate.  Determines the maximum number of tokens the model will produce.                                                |
+| `--aggregation`        | `str`   | `"l2"`               | Aggregation method (`l2`, `max_abs`).  Specifies how MLP activations are aggregated across layers.                                           |
+| `--refresh-rate`       | `float` | `0.2`                | Refresh rate for visualization (in seconds). Controls how often the UI updates in non-interactive mode.                                     |
+| `--interactive`        |         | `False`              | Enable interactive mode (press Enter to continue).  Pauses after each token generation, waiting for user input.                             |
+| `--device`             | `str`   | `"cpu"`              | Device to run the model on (`cpu`, `cuda`, `mps`). Selects the device for computation.                                                        |
+| `--scale`              | `str`   | `"linear"`           | Scaling method for visualization (`linear`, `log`, `minmax`). Controls how activation values are scaled for display.                         |
+| `--limit-chars`        | `int`   | `400`                | Limit the number of characters displayed in the generated text panel.                                                                    |
+| `--temp`               | `float` | `0.0`                | Sampling temperature. Controls the randomness of token sampling (higher = more random).                                                      |
+| `--top-k`              | `int`   | `50`                 | Top-k sampling.  Considers only the *k* most likely next tokens (set to 0 to disable).                                                       |
+| `--top-p`              | `float` | `1.0`                | Top-p (nucleus) sampling. Selects tokens from the smallest set with cumulative probability exceeding *p* (set to 1.0 to disable).            |
+| `--min-p`               | `float` | `0.0`                | Minimal Probability value. |
+| `--repetition-penalty` | `float` | `1.0`                | Penalty for repeated words. Discourages the model from repeating itself (higher = stronger penalty).                                       |
+| `--backend`            | `str`   | `"transformers"`     | Backend to use for the model (`transformers`).  Currently, only the Hugging Face Transformers backend is supported.                             |
+| `--seed`               | `int`   | `42`                 | Random seed for reproducibility. Ensures consistent results with the same input and parameters.                                            |
+| `--max-bar-length`     | `int`   | `35`                 | Maximum length of UI bars (in characters). Controls the length of bars used in the visualization panels.                                     |
+| `--selected-panels`    | `str`   | See Below          | List of selected panels to display. Specify panel names separated by spaces.                                                                 |
+| `--num-grid-rows`      | `int`   | `2`                  | The number of rows in the grid layout for panels.                                                                                            |
+| `--version`            |         |                      | Displays the application version and exits.                                                                                                 |
 
-## 7. Examples
+**Note on `--selected-panels`:**
 
-Check out examples/ folder for custom plugin examples, as well as how to integrate this into training loop
+The default list of selected panels is: generated_text top_predictions output_distribution mlp_activations attention_entropy
+
+You can customize this list to display only the panels you are interested in.
+
+## Internal Panels
+
+`mav` comes with a set of built-in visualization panels that provide insights into the model's internal state during text generation. These panels can be selected using the `--selected-panels` command-line flag. Here's a description of each:
+
+### 1. `generated_text`
+
+*   **Description:** Displays the generated text so far, highlighting the most recently predicted token.
+*   **Content:**
+    *   The panel shows the generated text, limited by the `--limit-chars` flag.
+    *   The most recently predicted token is highlighted (typically in green).
+    *   The text is rendered using Rich's `Text` object for styling.
+*   **Use Case:** Provides a clear view of the text the model is currently producing.
+
+### 2. `top_predictions`
+
+*   **Description:** Shows the top predicted tokens for the next position in the sequence, along with their probabilities and logits.
+*   **Content:**
+    *   Displays a list of the most likely tokens the model could generate next.
+    *   For each token, it shows:
+        *   The token itself.
+        *   The probability (as a percentage) of that token being selected.
+        *   The logit value (the raw output of the model before softmax).
+*   **Use Case:** Helps understand the model's confidence in its predictions and see the alternatives it considered.
+
+### 3. `output_distribution`
+
+*   **Description:** Visualizes the distribution of probabilities across all possible tokens for the next position.
+*   **Content:**
+    *   Presents a histogram-like representation of the probability distribution.
+    *   Sorted token probabilities are binned, and the sum of probabilities in each bin is represented by a bar.
+    *   The height of the bar indicates the combined probability mass within that bin.
+*   **Use Case:** Provides a high-level view of the model's uncertainty and the shape of the probability distribution.
+
+### 4. `mlp_activations`
+
+*   **Description:** Displays the activations of the Multi-Layer Perceptron (MLP) layers in the model.
+*   **Content:**
+    *   Shows the activation values for each MLP layer.
+    *   Uses bars to represent the magnitude of the activation.
+    *   The color of the bar typically indicates the sign (positive/negative) of the activation.
+*   **Use Case:** Allows visualizing the internal computations of the feedforward networks within the model.  Can provide insights into which layers are most active and how they are contributing to the output.
+
+### 5. `attention_entropy`
+
+*   **Description:** Shows the entropy of the attention distributions in each layer of the model.
+*   **Content:**
+    *   Displays the entropy values for each attention layer.
+    *   Uses bars to represent the magnitude of the entropy.
+    *   Higher entropy typically indicates more diverse attention patterns (the model is attending to a wider range of inputs).  Lower entropy indicates more focused attention.
+*   **Use Case:** Helps understand how the model is attending to different parts of the input sequence.  Can indicate whether the model is focusing on specific words or relationships.
+
+**Customization:**
+
+You can customize the appearance of these panels (e.g., the maximum bar length, the number of characters displayed) using the command-line flags described in the previous section.
+
+**Adding/Modifying Panels:**
+
+While these panels are built-in, `mav` is designed to be extensible. You can create your own custom panels to visualize different aspects of the model's state. Refer to the documentation on creating plugins for more information.
+
