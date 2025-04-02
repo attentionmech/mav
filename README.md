@@ -31,6 +31,13 @@ uv run --with openmav mav
 uv run --with git+https://github.com/attentionmech/mav mav --model gpt2 --prompt "hello mello"
 ```
 
+**Note**: You can replace `gpt2` with any other Hugging Face model compatible with transformers:
+- `meta-llama/Llama-3.2-1B`
+- `HuggingFaceTB/SmolLM-135M`
+- `gpt2-medium`
+- `gpt2-large`
+
+
 ### Method 2: Using `pip`
 
 1. Set up and activate a virtual environment
@@ -72,15 +79,6 @@ uv run --with git+https://github.com/attentionmech/mav mav --model gpt2 --prompt
 ### Method 4: Jupyter Notebook/Colab
 
 <a href="https://colab.research.google.com/gist/attentionmech/507312c98a6f49f420ec539c301dcb2d/openmav.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a>
-
-## 🔄 Compatible Models
-
-You can replace `gpt2` with other Hugging Face models:
-
-- `meta-llama/Llama-3.2-1B`
-- `HuggingFaceTB/SmolLM-135M`
-- `gpt2-medium`
-- `gpt2-large`
 
 ## 📚 Documentation & Tutorials
 
