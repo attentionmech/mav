@@ -32,10 +32,10 @@ uv run --with git+https://github.com/attentionmech/mav mav --model gpt2 --prompt
 ```
 
 **Note**: You can replace `gpt2` with any other Hugging Face model compatible with transformers:
-- `meta-llama/Llama-3.2-1B`
 - `HuggingFaceTB/SmolLM-135M`
 - `gpt2-medium`
 - `gpt2-large`
+- `meta-llama/Llama-3.2-1B` (gated repo, you need to set hf login token on your cli) 
 
 
 ### Method 2: Using `pip`
