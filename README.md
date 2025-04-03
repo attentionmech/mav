@@ -137,6 +137,17 @@ uv sync
 pip install -e .
 ```
 
+## 📝 Citation 
+
+```
+@article{attentionmech2025openmav,
+  title={OpenMAV: Model Activity Visualiser},
+  author={attentionmech},
+  year={2025}
+}
+```
+
+
 ## 🧠 Trivia
 
 This project started from a small tweet while testing a simple terminal ui loop: <a href="https://x.com/attentionmech/status/1905018536042570084">tweet</a>
