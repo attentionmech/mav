@@ -32,10 +32,13 @@ uv run --with git+https://github.com/attentionmech/mav mav --model gpt2 --prompt
 ```
 
 **Note**: You can replace `gpt2` with any other Hugging Face model compatible with transformers:
+
 - `HuggingFaceTB/SmolLM-135M`
 - `gpt2-medium`
 - `gpt2-large`
-- `meta-llama/Llama-3.2-1B` (gated repo, you need to set hf login token on your cli) 
+- `meta-llama/Llama-3.2-1B`
+
+For gated repos, ensure you have done `huggingface-cli login` and your environment has access to it.
 
 
 ### Method 2: Using `pip`
@@ -133,3 +136,11 @@ uv sync
 # Or using pip
 pip install -e .
 ```
+
+## 🧠 Trivia
+
+This project started from a small tweet while testing a simple terminal ui loop: <a href="https://x.com/attentionmech/status/1905018536042570084">tweet</a>
+
+<img src="https://github.com/user-attachments/assets/3a6252fe-2bdb-4c9c-84a7-8404de5f2382" height=500 width=600/>
+
+
