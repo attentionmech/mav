@@ -152,6 +152,7 @@ pip install -e .
 
 This project started from a small tweet while testing a simple terminal ui loop: <a href="https://x.com/attentionmech/status/1905018536042570084">tweet</a>
 
-<img src="https://github.com/user-attachments/assets/3a6252fe-2bdb-4c9c-84a7-8404de5f2382" height=500 width=600/>
+## ⭐ Star History
 
+[![Star History Chart](https://api.star-history.com/svg?repos=attentionmech/mav&type=Timeline)](https://www.star-history.com/#attentionmech/mav&Timeline)
 
