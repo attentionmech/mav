@@ -29,8 +29,8 @@ def MAV(
     aggregation: str = "l2",
     refresh_rate: float = 0.1,
     interactive: bool = False,
-    selected_panels=None,
-    num_grid_rows=1,
+    selected_panels=["generated_text", "token_ascii_art", "top_predictions"],
+    num_grid_rows=2,
     max_bar_length=50,
     # Execution & Backend Settings
     device: str = "cpu",
@@ -229,12 +229,12 @@ def main():
         default=[
             "generated_text",
             "top_predictions",
-            "output_distribution",
             "mlp_activations",
+            "token_ascii_art",
             "attention_entropy",
         ],
         help="List of selected panels. Default: top_predictions, "
-        "generated_text, mlp_activations, attention_entropy, output_distribution.",
+        "generated_text, mlp_activations, attention_entropy, token_ascii_art.",
     )
 
     parser.add_argument(
