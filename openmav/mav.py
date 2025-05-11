@@ -162,7 +162,7 @@ def main():
     parser.add_argument(
         "--temp",
         type=float,
-        default=0.0,
+        default=0.7,
         help="Sampling temperature (higher values = more randomness, default: 0.0)",
     )
 
@@ -176,7 +176,7 @@ def main():
     parser.add_argument(
         "--top-p",
         type=float,
-        default=1.0,
+        default=0.8,
         help="top-p (nucleus) filtering (set to 1.0 to disable, default: 1.0)",
     )
 
@@ -190,7 +190,7 @@ def main():
     parser.add_argument(
         "--repetition-penalty",
         type=float,
-        default=1.0,
+        default=1.1,
         help="Penalty for repeated words (default: 1.0, higher values discourage repetition)",
     )
 

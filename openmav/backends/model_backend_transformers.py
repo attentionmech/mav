@@ -77,11 +77,16 @@ class TransformersBackend(ModelBackend):
                 output_attentions=True,
                 pad_token_id=self.tokenizer.eos_token_id,  # warning TODO: find correct way to handle this
             )
+        
+        # The generated sequence includes the input_ids + new token.
+        # The new token is the last one in the sequence.
+        next_token_id = outputs.sequences[0, -1].item()
 
         return {
             "logits": outputs.scores[-1].unsqueeze(0).cpu(),  # Last step logits
             "hidden_states": outputs.hidden_states[-1],  # Last step hidden states
             "attentions": outputs.attentions[-1],  # Last step attentions
+            "next_token_id": next_token_id  # ADDED: The token ID chosen by model.generate()
         }
 
     def tokenize(self, text):

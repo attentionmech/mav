@@ -40,7 +40,8 @@ class StateFetcher:
         generated_ids = inputs.tolist()[0]
 
         for _ in range(self.max_new_tokens):
-            outputs = self.backend.generate(
+            # Call the backend to generate the next token and associated states
+            backend_outputs = self.backend.generate(
                 generated_ids,
                 temperature=temperature,
                 top_k=top_k,
@@ -48,13 +49,18 @@ class StateFetcher:
                 min_p=min_p,
                 repetition_penalty=repetition_penalty,
             )
-            logits = outputs["logits"]
-            hidden_states = outputs["hidden_states"]
-            attentions = outputs["attentions"]
+            
+            logits = backend_outputs["logits"]
+            hidden_states = backend_outputs["hidden_states"]
+            attentions = backend_outputs["attentions"]
+            # Use the next_token_id directly from the backend
+            next_token_id = backend_outputs["next_token_id"]
 
+            # Calculate next_token_probs and top_k for visualization
             next_token_probs = torch.softmax(logits[:, -1, :], dim=-1).squeeze()
             top_probs, top_ids = torch.topk(next_token_probs, 20)
-            next_token_id = torch.multinomial(next_token_probs, num_samples=1).item()
+            
+            # Append the token chosen by the backend's generate method
             generated_ids.append(next_token_id)
 
             measurement_data = self.state_processor.next(
