@@ -17,10 +17,17 @@ class StateFetcher:
         aggregation="l2",
         scale="linear",
         max_bar_length=20,
+        enable_audio=False,
+        audio_duration=0.1,
     ):
         self.max_new_tokens = max_new_tokens
         self.state_processor = StateProcessor(
-            backend, aggregation=aggregation, scale=scale, max_bar_length=max_bar_length
+            backend, 
+            aggregation=aggregation, 
+            scale=scale, 
+            max_bar_length=max_bar_length,
+            enable_audio=enable_audio,
+            audio_duration=audio_duration,
         )
         self.backend = backend
 

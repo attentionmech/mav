@@ -37,6 +37,9 @@ def MAV(
     scale: str = "linear",
     backend: str = "transformers",
     seed: int = 42,
+    # Audio Settings
+    enable_audio: bool = False,
+    audio_duration: float = 0.1,
     # advanced
     model_obj=None,  # Pass model object compatible with backend
     tokenizer_obj=None,  # Pass tokenizer object compatible with backend
@@ -67,6 +70,8 @@ def MAV(
         aggregation=aggregation,
         scale=scale,
         max_bar_length=max_bar_length,
+        enable_audio=enable_audio,
+        audio_duration=audio_duration,
     )
 
     manager = MainLoopManager(
@@ -238,6 +243,20 @@ def main():
         default=2,
     )
 
+    parser.add_argument(
+        "--enable-audio",
+        action="store_true",
+        help="Enable audio feedback for token generation",
+        default=False,
+    )
+
+    parser.add_argument(
+        "--audio-duration",
+        type=float,
+        default=0.1,
+        help="Duration of audio feedback beep in seconds (default: 0.1)",
+    )
+
     parser.add_argument("--version", action="store_true", help="version of MAV")
 
     args = parser.parse_args()
@@ -270,6 +289,9 @@ def main():
         device=args.device,
         backend=args.backend,
         seed=args.seed,
+        # Audio Settings
+        enable_audio=args.enable_audio,
+        audio_duration=args.audio_duration,
     )
 
 
