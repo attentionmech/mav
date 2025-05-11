@@ -29,14 +29,17 @@ def MAV(
     aggregation: str = "l2",
     refresh_rate: float = 0.1,
     interactive: bool = False,
-    selected_panels=None,
-    num_grid_rows=1,
+    selected_panels=["generated_text", "token_ascii_art", "top_predictions"],
+    num_grid_rows=2,
     max_bar_length=50,
     # Execution & Backend Settings
     device: str = "cpu",
     scale: str = "linear",
     backend: str = "transformers",
     seed: int = 42,
+    # Audio Settings
+    enable_audio: bool = False,
+    audio_duration: float = 0.1,
     # advanced
     model_obj=None,  # Pass model object compatible with backend
     tokenizer_obj=None,  # Pass tokenizer object compatible with backend
@@ -67,6 +70,8 @@ def MAV(
         aggregation=aggregation,
         scale=scale,
         max_bar_length=max_bar_length,
+        enable_audio=enable_audio,
+        audio_duration=audio_duration,
     )
 
     manager = MainLoopManager(
@@ -162,7 +167,7 @@ def main():
     parser.add_argument(
         "--temp",
         type=float,
-        default=0.0,
+        default=0.7,
         help="Sampling temperature (higher values = more randomness, default: 0.0)",
     )
 
@@ -176,7 +181,7 @@ def main():
     parser.add_argument(
         "--top-p",
         type=float,
-        default=1.0,
+        default=0.8,
         help="top-p (nucleus) filtering (set to 1.0 to disable, default: 1.0)",
     )
 
@@ -190,7 +195,7 @@ def main():
     parser.add_argument(
         "--repetition-penalty",
         type=float,
-        default=1.0,
+        default=1.1,
         help="Penalty for repeated words (default: 1.0, higher values discourage repetition)",
     )
 
@@ -224,18 +229,32 @@ def main():
         default=[
             "generated_text",
             "top_predictions",
-            "output_distribution",
             "mlp_activations",
+            "token_ascii_art",
             "attention_entropy",
         ],
         help="List of selected panels. Default: top_predictions, "
-        "generated_text, mlp_activations, attention_entropy, output_distribution.",
+        "generated_text, mlp_activations, attention_entropy, token_ascii_art.",
     )
 
     parser.add_argument(
         "--num-grid-rows",
         type=int,
         default=2,
+    )
+
+    parser.add_argument(
+        "--enable-audio",
+        action="store_true",
+        help="Enable audio feedback for token generation",
+        default=False,
+    )
+
+    parser.add_argument(
+        "--audio-duration",
+        type=float,
+        default=0.1,
+        help="Duration of audio feedback beep in seconds (default: 0.1)",
     )
 
     parser.add_argument("--version", action="store_true", help="version of MAV")
@@ -270,6 +289,9 @@ def main():
         device=args.device,
         backend=args.backend,
         seed=args.seed,
+        # Audio Settings
+        enable_audio=args.enable_audio,
+        audio_duration=args.audio_duration,
     )
 
 

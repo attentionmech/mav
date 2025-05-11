@@ -104,48 +104,365 @@ class AttentionEntropyPanel(PanelBase):
         return entropy_str
 
 
-class OutputDistributionPanel(PanelBase):
+class TokenAsciiArtPanel(PanelBase):
     def __init__(
         self,
         measurements: ModelMeasurements,
         max_bar_length: int = 20,
         limit_chars: int = 50,
-        num_bins: int = 20,
     ):
         super().__init__(
-            title="Output Distribution",
+            title="Token ASCII Art",
             border_style="yellow",
             max_bar_length=max_bar_length,
             limit_chars=None,
         )
         self.measurements = measurements
-        self.num_bins = num_bins
+        self.last_tokens = []  # Store token history
+        self.max_token_history = 20  # Increased from 3 to 10 for longer words
+        
+        # ASCII art patterns for big text
+        self.alphabet = {
+            'a': [
+                "  █████  ",
+                " ██   ██ ",
+                "███████  ",
+                "██   ██  ",
+                "██   ██  ",
+            ],
+            'b': [
+                "██████  ",
+                "██   ██ ",
+                "██████  ",
+                "██   ██ ",
+                "██████  ",
+            ],
+            'c': [
+                " ██████ ",
+                "██      ",
+                "██      ",
+                "██      ",
+                " ██████ ",
+            ],
+            'd': [
+                "██████  ",
+                "██   ██ ",
+                "██   ██ ",
+                "██   ██ ",
+                "██████  ",
+            ],
+            'e': [
+                "███████ ",
+                "██      ",
+                "█████   ",
+                "██      ",
+                "███████ ",
+            ],
+            'f': [
+                "███████ ",
+                "██      ",
+                "█████   ",
+                "██      ",
+                "██      ",
+            ],
+            'g': [
+                " ██████  ",
+                "██       ",
+                "██   ███ ",
+                "██    ██ ",
+                " ██████  ",
+            ],
+            'h': [
+                "██   ██ ",
+                "██   ██ ",
+                "███████ ",
+                "██   ██ ",
+                "██   ██ ",
+            ],
+            'i': [
+                "██ ",
+                "██ ",
+                "██ ",
+                "██ ",
+                "██ ",
+            ],
+            'j': [
+                "     ██ ",
+                "     ██ ",
+                "     ██ ",
+                "██   ██ ",
+                " █████  ",
+            ],
+            'k': [
+                "██   ██ ",
+                "██  ██  ",
+                "█████   ",
+                "██  ██  ",
+                "██   ██ ",
+            ],
+            'l': [
+                "██      ",
+                "██      ",
+                "██      ",
+                "██      ",
+                "███████ ",
+            ],
+            'm': [
+                "███    ███ ",
+                "████  ████ ",
+                "██ ████ ██ ",
+                "██  ██  ██ ",
+                "██      ██ ",
+            ],
+            'n': [
+                "███    ██ ",
+                "████   ██ ",
+                "██ ██  ██ ",
+                "██  ██ ██ ",
+                "██   ████ ",
+            ],
+            'o': [
+                " ██████  ",
+                "██    ██ ",
+                "██    ██ ",
+                "██    ██ ",
+                " ██████  ",
+            ],
+            'p': [
+                "██████  ",
+                "██   ██ ",
+                "██████  ",
+                "██      ",
+                "██      ",
+            ],
+            'q': [
+                " ██████  ",
+                "██    ██ ",
+                "██    ██ ",
+                "██ ▄▄ ██ ",
+                " ██████  ",
+                "    ▀▀   ",
+            ],
+            'r': [
+                "██████  ",
+                "██   ██ ",
+                "██████  ",
+                "██   ██ ",
+                "██   ██ ",
+            ],
+            's': [
+                " ██████  ",
+                "██       ",
+                " █████   ",
+                "     ██  ",
+                "██████   ",
+            ],
+            't': [
+                "████████ ",
+                "   ██    ",
+                "   ██    ",
+                "   ██    ",
+                "   ██    ",
+            ],
+            'u': [
+                "██    ██ ",
+                "██    ██ ",
+                "██    ██ ",
+                "██    ██ ",
+                " ██████  ",
+            ],
+            'v': [
+                "██    ██ ",
+                "██    ██ ",
+                "██    ██ ",
+                " ██  ██  ",
+                "  ████   ",
+            ],
+            'w': [
+                "██     ██ ",
+                "██  █  ██ ",
+                "██ ███ ██ ",
+                "████ ████ ",
+                "██     ██ ",
+            ],
+            'x': [
+                "██   ██ ",
+                " ██ ██  ",
+                "  ███   ",
+                " ██ ██  ",
+                "██   ██ ",
+            ],
+            'y': [
+                "██    ██ ",
+                " ██  ██  ",
+                "  ████   ",
+                "   ██    ",
+                "   ██    ",
+            ],
+            'z': [
+                "███████ ",
+                "    ██  ",
+                "  ██    ",
+                "██      ",
+                "███████ ",
+            ],
+            ' ': [
+                "    ",
+                "    ",
+                "    ",
+                "    ",
+                "    ",
+            ],
+            '.': [
+                "   ",
+                "   ",
+                "   ",
+                "   ",
+                "██ ",
+            ],
+            ',': [
+                "    ",
+                "    ",
+                "    ",
+                " ██ ",
+                "██  ",
+            ],
+            '!': [
+                "██ ",
+                "██ ",
+                "██ ",
+                "   ",
+                "██ ",
+            ],
+            '?': [
+                "██████  ",
+                "     ██ ",
+                "  ████  ",
+                "        ",
+                "  ██    ",
+            ],
+            '1': [
+                " ██ ",
+                "███ ",
+                " ██ ",
+                " ██ ",
+                "███ ",
+            ],
+            '2': [
+                "████  ",
+                "   ██ ",
+                " ███  ",
+                "██    ",
+                "█████ ",
+            ],
+            '3': [
+                "████  ",
+                "   ██ ",
+                " ███  ",
+                "   ██ ",
+                "████  ",
+            ],
+            '4': [
+                "██  ██ ",
+                "██  ██ ",
+                "█████  ",
+                "    ██ ",
+                "    ██ ",
+            ],
+            '5': [
+                "█████ ",
+                "██    ",
+                "████  ",
+                "   ██ ",
+                "████  ",
+            ],
+            '6': [
+                " ████  ",
+                "██     ",
+                "█████  ",
+                "██  ██ ",
+                " ████  ",
+            ],
+            '7': [
+                "█████ ",
+                "   ██ ",
+                "  ██  ",
+                " ██   ",
+                "██    ",
+            ],
+            '8': [
+                " ████  ",
+                "██  ██ ",
+                " ████  ",
+                "██  ██ ",
+                " ████  ",
+            ],
+            '9': [
+                " ████  ",
+                "██  ██ ",
+                " █████ ",
+                "    ██ ",
+                " ████  ",
+            ],
+            '0': [
+                " ████  ",
+                "██  ██ ",
+                "██  ██ ",
+                "██  ██ ",
+                " ████  ",
+            ],
+        }
 
     def get_panel_content(self):
-        next_token_probs = self.measurements.next_token_probs.cpu().numpy()
-        sorted_probs = np.sort(next_token_probs)[
-            -100:
-        ]  # Taking top 100 highest probabilities
-
-        bin_edges = np.linspace(0, len(sorted_probs), self.num_bins + 1, dtype=int)
-        bin_sums = [
-            np.sum(sorted_probs[bin_edges[i] : bin_edges[i + 1]])
-            for i in range(self.num_bins)
-        ]
-
-        max_sum = max(bin_sums) if max(bin_sums) > 0 else 1
-        bar_chars = ["█" * int((s / max_sum) * self.max_bar_length) for s in bin_sums]
-
-        bin_labels = [
-            f"{sorted_probs[bin_edges[i + 1] - 1]:.4f}" for i in range(self.num_bins)
-        ]
-
-        return "\n".join(
-            [
-                f"[bold yellow]{label}[/]: [bold cyan]{bar}[/]"
-                for label, bar in zip(bin_labels, bar_chars)
-            ][::-1]
-        )
+        # Get the new token
+        token = self.measurements.predicted_char
+        
+        # Add the token to our history
+        self.last_tokens.append(token)
+        
+        # Keep only the last N tokens for display
+        if len(self.last_tokens) > self.max_token_history:
+            self.last_tokens = self.last_tokens[-self.max_token_history:]
+            
+        # Join the tokens to form the current word
+        word = ''.join(self.last_tokens).strip()
+        
+        # If the word is empty, use a single space
+        if not word:
+            word = " "
+            
+        # Create the ASCII art for the word
+        art_lines = [""] * 5  # Most characters are 5 lines tall
+        
+        # For each character in the word
+        for char in word.lower():
+            char_art = self.alphabet.get(char, self.alphabet.get(' '))
+            
+            # Add this character's art to each line
+            for i in range(min(len(art_lines), len(char_art))):
+                art_lines[i] += char_art[i]
+        
+        # If the ASCII art is too wide, truncate it with an ellipsis
+        max_width = 80  # Maximum width for display
+        if any(len(line) > max_width for line in art_lines):
+            for i in range(len(art_lines)):
+                if len(art_lines[i]) > max_width:
+                    art_lines[i] = art_lines[i][:max_width-3] + "..."
+        
+        # Choose random colors for fun
+        colors = ["red", "green", "blue", "magenta", "cyan", "yellow"]
+        import random
+        color = random.choice(colors)
+        
+        # Format with rich text formatting
+        formatted_lines = [f"[bold {color}]{line}[/]" for line in art_lines]
+        
+        # Add the original token at the bottom for clarity
+        token_display = word
+        if not token_display.strip():
+            token_display = "[SPACE]"
+            
+        return "\n".join(formatted_lines) + f"\n\n[bold white]'{token_display}'[/]"
 
 
 class GeneratedTextPanel(PanelBase):
